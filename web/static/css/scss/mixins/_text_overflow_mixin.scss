@@ -1,0 +1,16 @@
+/*多行文本截取,chrome、Safari*/ 
+@mixin more-text-ellipsis($line:4){
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: $line;
+	-webkit-box-orient: vertical;
+}
+
+/*单行文本截取*/ 
+@mixin singleline-ellipsis($substract:0){
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	width: 100% - $substract;
+}
