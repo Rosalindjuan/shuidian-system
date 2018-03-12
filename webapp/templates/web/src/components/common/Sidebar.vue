@@ -39,12 +39,12 @@
             title: '库存',
             subs: [
               {
-                index: 'stock_new',
+                index: '/stock_new',
                 title: '新建库存',
                 icon: 'el-icon-edit-outline',
               },
               {
-                index: 'stock_list',
+                index: '/stock_list',
                 title: '库存列表',
                 icon: 'el-icon-tickets',
               },
@@ -56,12 +56,12 @@
             title: '模板',
             subs: [
               {
-                index: 'template_new',
+                index: '/template_new',
                 title: '新建模板',
                 icon: 'el-icon-edit-outline',
               },
               {
-                index: 'template_list',
+                index: '/template_list',
                 title: '模板列表',
                 icon: 'el-icon-tickets',
               }
@@ -73,12 +73,12 @@
             title: '客户',
             subs: [
               {
-                index: 'customer_new',
+                index: '/customer_new',
                 title: '添加客户',
                 icon: 'el-icon-edit-outline',
               },
               {
-                index: 'customer_list',
+                index: '/customer_list',
                 title: '客户列表',
                 icon: 'el-icon-tickets',
               }
@@ -90,12 +90,12 @@
             title: '管理员',
             subs: [
               {
-                index: 'admin_list',
+                index: '/admin_list',
                 title: '管理员列表',
                 icon: 'el-icon-tickets',
               },
               {
-                index: 'admin_new',
+                index: '/admin_new',
                 title: '新建管理员',
                 icon: 'el-icon-edit-outline',
               },
@@ -106,7 +106,11 @@
     },
     computed: {
       onRoutes() {
-        return this.$route.path.replace('/', '');
+        let id = this.$route.params.id
+        if(id) {
+          return this.$route.path.replace('/'+id, '')
+        }
+        return this.$route.path;
       }
     }
   }
@@ -116,7 +120,7 @@
   .sidebar {
     display: block;
     position: absolute;
-    width: 250px;
+    width: 210px;
     left: 0;
     top: 70px;
     bottom: 0;

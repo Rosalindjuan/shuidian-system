@@ -1,0 +1,44 @@
+mongodb:
+  database: 'shuidian_system'
+  user: 'user'
+  password: 'password'
+  host: 'localhost'
+  port: '27017'
+  minsize: 1
+  maxsize: 5
+
+wechat:
+  appid: 'wx359f66f47c8a52a6'
+  secret: '674c865b69dd4282619bff5ecf020c48'
+  token: '123456'
+
+redis:
+  host: 'localhost'
+  port: 6379
+  minsize: 5
+  maxsize: 10
+
+
+pulsar:
+  bind: '0.0.0.0:8888'
+  keep_alive: 60
+  workers: 2
+  timeout: 60
+  max_requests: 100000
+
+
+fernet_key: 'rHylBSuvhk8Eg9-PV_MFsM5TYgIz65BAoUYvuLE-4OY='
+debugtoolbar_enable: False
+pulsar_server_enable: False
+
+cdn:
+  host: 'http://cdn.join-climate.com'
+  process_env: False
+
+
+qiniu:
+  access_key: 'FAFwf2o_0vQZKq3D9Op7ObUfiSnRXZdwHNbSNZsl'
+  secret_key: 'Yqm1lyYjAqgOtzCGrqNMxk-Bz5Omsekb9U20Ulwm'
+  bucket_name: 'joinclimatecdntest'
+  adir: 'wechatapp/static/src/'
+  replace_adir: 'wechatapp/'

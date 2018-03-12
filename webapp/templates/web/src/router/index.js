@@ -22,14 +22,10 @@ export default new Router({
           path: '/stock_new',
           component: resolve => require(['../components/page/StockNew.vue'], resolve)
         },
-        // {
-        //   path: '/stock_type_new',
-        //   component: resolve => require(['../components/page/StockTypeNew.vue'], resolve)
-        // },
-        // {
-        //   path: '/stock_type_list',
-        //   component: resolve => require(['../components/page/StockTypeList.vue'], resolve)
-        // },
+        {
+          path: ':id',
+          component: resolve => require(['../components/page/StockNew.vue'], resolve)
+        },
         {
           path: '/customer_list',
           component: resolve => require(['../components/page/CustomerList.vue'], resolve)
@@ -44,6 +40,10 @@ export default new Router({
         },
         {
           path: '/template_new',
+          component: resolve => require(['../components/page/TemplateNew.vue'], resolve)
+        },
+        {
+          path: '/template_list/:id',
           component: resolve => require(['../components/page/TemplateNew.vue'], resolve)
         },
         {

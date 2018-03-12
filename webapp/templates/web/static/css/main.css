@@ -20,7 +20,7 @@ a {
 .content {
   background: none repeat scroll 0 0 #fff;
   position: absolute;
-  left: 250px;
+  left: 210px;
   right: 0;
   top: 70px;
   bottom: 0;
@@ -138,4 +138,9 @@ a {
 
 .editor-btn {
   margin-top: 20px;
+}
+
+
+.wrap {
+  min-width: 1050px;
 }
