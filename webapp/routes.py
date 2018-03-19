@@ -1,5 +1,6 @@
 import pathlib
-from .views import Home, StockList, newStock, StockDetail, getStocks, newTemplate, temList, temGoodsList, updateTemplate
+from .views import Home, initData, StockList, newStock, StockDetail, getStocks, newTemplate, temList, temGoodsList, \
+    updateTemplate, Customers, addRepay, updateCusGoods, updateCustomer, deleteTemplate, Adminitors, Adminitor
 
 import re
 
@@ -7,6 +8,7 @@ PROJECT_ROOT = pathlib.Path(__file__).parent
 
 routes = [
     ('*', '/', Home, 'home', True),
+    ('GET', '/init', initData, 'init', True),
     ('*', '/stock', StockList, 'stock', True),
     ('PUT', '/new_stock', newStock, 'new_stock', True),
     ('*', '/stock_detail', StockDetail, 'stock_detail', True),
@@ -15,6 +17,13 @@ routes = [
     ('*', '/template_list', temList, 'template_list', True),
     ('POST', '/tem_goods_list', temGoodsList, 'tem_goods_list', True),
     ('POST', '/update_template', updateTemplate, 'update_template', True),
+    ('POST', '/delete_template', deleteTemplate, 'delete_template', True),
+    ('*','/customer', Customers, 'customer',True),
+    ('POST', '/add_repay', addRepay, 'add_repay', True),
+    ('POST', '/update_cus_goods', updateCusGoods, 'update_cus_goods', True),
+    ('POST', '/update_customer', updateCustomer, 'update_customer', True),
+    ('*', '/set_admin', Adminitors, 'set_admin', True),
+    ('*', '/admin', Adminitor, 'admin', True),
 
 ]
 

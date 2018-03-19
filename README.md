@@ -62,63 +62,10 @@ git clone ssh://git@ph.join-clima.com/diffusion/PARSER/join-parser.git parser
     Command + Shift + g
     
     
-#公众号测试配置
-##1. 设置公众号
-- 接口配置域名及token
-```
-URL     http://debug.join-clima.com/wechat
-Token   123456
-```
-- JS安全域名
-```
-域名     join-clima.com
-```
-- 网页授权回调域名
-```
-域名     debug.join-clima.com
-```
     
-##2. 设置配置文件join.yaml中的wechat配置
+# mongoDB
+1. 更新文档
 ```
-wechat:
-  appid: 'wxf6b77f2ddcab675f'
-  secret: 'cfeffa66a1ec353142041cc102aefb28'
-  token: '123456'
-
+db.users.update({'is_active':false},{$set:{'is_active':true}},{multi:true})
 ```
-如果需要cdn时将join.yaml中的cdn里面的host替换成自己的cdn；process_env为false时就是不使用cdn，true时使用cdn；
-在webpack.prod.js文件里的publicPath需要手动改成cdn的路径。
-
-
-##3. 创建公众号菜单
-[创建菜单链接](https://mp.weixin.qq.com/debug/cgi-bin/apiinfo?t=index&type=%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95&form=%E8%87%AA%E5%AE%9A%E4%B9%89%E8%8F%9C%E5%8D%95%E5%88%9B%E5%BB%BA%E6%8E%A5%E5%8F%A3%20/menu/create)
-
-菜单的编码如下：
-```
-{
-    "button": [
-        {
-            "type": "view",
-            "name": "主页",
-            "url": "http://debug.join-clima.com"
-        },
-        {
-            "name": "调试",
-            "sub_button": [
-                {
-                    "type": "view",
-                    "name": "登出",
-                    "url": "http://debug.join-clima.com/signout"
-                },
-                {
-                    "type": "view",
-                    "name": "jsapi demo",
-                    "url": "http://debug.join-clima.com/wxjs"
-                }
-            ]
-        }
-    ]
-}
-```
-    
     

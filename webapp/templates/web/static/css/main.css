@@ -24,6 +24,7 @@ a {
   right: 0;
   top: 70px;
   bottom: 0;
+  min-width: 600px;
   width: auto;
   padding: 40px;
   box-sizing: border-box;
@@ -73,6 +74,9 @@ a {
   text-align: center;
 }
 
+.form-box .center-right {
+  text-align: right;
+}
 .el-time-panel__content::after, .el-time-panel__content::before {
   margin-top: -7px;
 }

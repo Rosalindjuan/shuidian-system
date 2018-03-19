@@ -38,12 +38,68 @@ export const templateList = (params) => {
 }
 
 
-// 模板列表
+// 模板货物列表
 export const temGoodsList = (params) => {
   return http.fetchPost('/tem_goods_list', params)
 }
 
-// 模板列表
+// 更新模板
 export const updateTemplate = (params) => {
   return http.fetchPost('/update_template', params)
+}
+
+// 删除模板
+export const deleteTemplate = (params) => {
+  return http.fetchPost('/delete_template', params)
+}
+// 新建客户
+export const newCustomer = (params) => {
+  return http.fetchPut('/customer', params)
+}
+
+// 客户列表
+export const getCustomers = (params) => {
+  return http.fetchPost('/customer', params)
+}
+
+// 获取客户
+export const getCustomer = (params) => {
+  return http.fetchGet('/customer', params)
+}
+
+// 添加付款信息
+export const addCusRepay = (params) => {
+  return http.fetchPost('/add_repay', params)
+}
+
+// 更新客户用料信息
+export const updateCusGoods = (params) => {
+  return http.fetchPost('/update_cus_goods', params)
+}
+
+// 修改客户信息
+export const updateCustomer = (params) => {
+  return http.fetchPost('/update_customer', params)
+}
+
+
+// 管理员列表信息
+export const getAdminList = (params) => {
+  return http.fetchGet('/set_admin', params)
+}
+
+// 新建管理员
+export const newAdmin = (params) => {
+  return http.fetchPut('/set_admin', params)
+}
+
+// 删除管理员
+export const deleteAdmin = (params) => {
+  return http.fetchPost('/set_admin', params)
+}
+
+
+// 获取管理员
+export const getAdmin = (params) => {
+  return http.fetchGet('/admin', params)
 }

@@ -4,6 +4,83 @@ from umongo import Instance, Document, fields, validate, ValidationError
 from . import instance
 
 
+@instance.register
+class Users(Document):
+    user = fields.StringField(unique=True, required=True)  # 管理员登录用户名
+    password = fields.StringField()  # 管理员登录密码
+    type = fields.StringField()  # 管理员类型 -- 超级管理员/普通管理员
+    real_name = fields.StringField()  # 管理员真实姓名
+    # identity_code = fields.StringField()  # 用户识别码
+    # code = fields.StringField()  # 修改验证码
+    department = fields.StringField()  # 管理员部门
+    position = fields.StringField()  # 管理员职位
+    tel = fields.StringField()  # 移动电话
+    email = fields.StringField()  # 邮箱
+    qq = fields.StringField()  # qq号
+    wechat = fields.StringField()  # 微信
+    is_active = fields.BooleanField(missing=True)  # 记录有效性
+    # delete_active = fields.BooleanField(missing=True)  # 删除有效性 True未删除,False删除
+    created_time = fields.DateTimeField(missing=datetime.datetime.now)  # 记录时间
+
+    class Meta:
+        collection_name = 'users'
+
+    @classmethod
+    async def new_user(cls, user='', password='', real_name='', department='', position='', tel='', email='',
+                       qq='', wechat='', type='普通管理员'):
+        ifuser = await cls.find_one({"user": user})
+        if ifuser:
+            return {'errcode': 1, 'msg': '已经有了该用户，换个名字吧'}
+        await cls(user=user,
+                  password=password,
+                  type=type,
+                  real_name=real_name,
+                  department=department,
+                  position=position,
+                  tel=tel,
+                  email=email,
+                  qq=qq,
+                  wechat=wechat).commit()
+        return {'errcode': 0, 'msg': '添加成功'}
+
+    @classmethod
+    async def update_user(cls, id='', department='', position='', tel='', email='', qq='', wechat=''):
+        ifuser = await cls.find_one({"id": ObjectId('id')})
+        if ifuser:
+            ifuser.department = department
+            ifuser.position = position
+            ifuser.tel = tel
+            ifuser.email = email
+            ifuser.qq = qq
+            ifuser.wechat = wechat
+            await ifuser.commit()
+            return {'errcode': 0, 'msg': '已修改'}
+        return {'errcode': 1, 'msg': '没有此管理员'}
+
+    # 获取管理员列表
+    @classmethod
+    async def get_users(cls):
+        return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
+
+    # 获取管理员列表
+    @classmethod
+    async def get_user(cls, id=''):
+        try:
+            return await cls.find_one({"id": ObjectId(id)})
+        except:
+            return None
+
+    @classmethod
+    async def delete_user(cls, id=''):
+        try:
+            user = await cls.find_one({"id": ObjectId(id)})
+            user.is_active = False
+            await user.commit()
+            return {'errcode': 0, 'msg': '已删除'}
+        except:
+            return {'errcode': 1, 'msg': '没有此管理员,请检查管理员列表'}
+
+
 # 库存
 @instance.register
 class Stock(Document):
@@ -18,6 +95,9 @@ class Stock(Document):
     is_active = fields.BooleanField(missing=True)  # 记录有效性
     created_time = fields.DateTimeField(missing=datetime.datetime.now)  # 记录时间
 
+    class Meta:
+        collection_name = 'stock'
+
     @classmethod
     async def create_stock(cls, name='', num=0, unit='', opening_price=0, price=0, remarks=''):
         stock = await cls.find_one({"name": name})
@@ -31,14 +111,18 @@ class Stock(Document):
                   opening_amount=opening_price * num,
                   amount=price * num,
                   remarks=remarks).commit()
-        return {'errcode': 0, 'msg': ''}
+        return {'errcode': 0, 'msg': '添加成功'}
 
     # 获取库存列表
     @classmethod
     async def get_stocks(cls, is_active=None):
         if is_active == 'true' or is_active == True:
-            return await cls.find({"is_active": True}).to_list(length=None)
-        return await cls.find({"is_active": False}).to_list(length=None)
+            return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
+        return await cls.find({"is_active": False}).sort([('created_time', -1)]).to_list(length=None)
+
+    @classmethod
+    async def get_stocks_count(cls):
+        return await cls.find({"is_active": True}).count()
 
     # 获取库存
     @classmethod
@@ -51,12 +135,13 @@ class Stock(Document):
     # 删除库存
     @classmethod
     async def delete_stock(cls, id=''):
-        stock = await cls.get_stock(id)
-        if stock:
+        try:
+            stock = await cls.get_stock(id)
             stock.is_active = False
             await stock.commit()
             return {'errcode': 0, 'msg': '已删除'}
-        return {'errcode': 1, 'msg': '没有此货物'}
+        except:
+            return {'errcode': 1, 'msg': '没有此物料,请检查物料列表'}
 
     # 修改库存
     @classmethod
@@ -73,7 +158,7 @@ class Stock(Document):
             stock.amount = price * num
             stock.remarks = remarks
             await stock.commit()
-            return {'errcode': 0, 'msg': ''}
+            return {'errcode': 0, 'msg': '已修改'}
         return {'errcode': 1, 'msg': '没有此货物'}
 
 
@@ -118,8 +203,8 @@ class GoodsTemplate(Document):
     @classmethod
     async def goods_template_list(cls, is_active=None):
         if is_active == None:
-            return await cls.find({"is_active": True}).to_list(length=None)
-        return await cls.find({"is_active": is_active}).to_list(length=None)
+            return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
+        return await cls.find({"is_active": is_active}).sort([('created_time', -1)]).to_list(length=None)
 
     # 更新模板
     @classmethod
@@ -135,6 +220,17 @@ class GoodsTemplate(Document):
             await goods_tem.commit()
             return {'errcode': 0, 'msg': '修改成功'}
         return {'errcode': 1, 'msg': '没有此模板'}
+
+    # 删除模板
+    @classmethod
+    async def delete_goods_template(cls, id=''):
+        try:
+            goods_tem = await cls.find_one({'id': ObjectId(id)})
+            goods_tem.is_active = False
+            await goods_tem.commit()
+            return {'errcode': 0, 'msg': '已删除'}
+        except:
+            return {'errcode': 1, 'msg': '没有此模板,请仔细检查模板'}
 
 
 # 顾客信息
@@ -154,24 +250,85 @@ class Customer(Document):
                          tel=tel,
                          remarks=remarks).commit()
 
+    @classmethod
+    async def get_customers(cls, is_active=True):
+        return await cls.find({"is_active": is_active}).sort([('created_time', -1)]).to_list(length=None)
+
+    @classmethod
+    async def get_customer(cls, id=''):
+        try:
+            return await cls.find_one({"id": ObjectId(id)})
+        except:
+            return None
+
+    @classmethod
+    async def update_customer(cls, id='', address='', tel='', remarks=''):
+        customer = await cls.find_one({"id": ObjectId(id)})
+        if customer:
+            customer.address = address
+            customer.tel = tel
+            customer.remarks = remarks
+            await customer.commit()
+            return {'errcode': 0, 'msg': '修改成功'}
+        return {'errcode': 1, 'msg': '修改失败，请稍后再试'}
+
 
 # 客户用料
 @instance.register
 class CustomerGoodsDetail(Document):
     customer = fields.ReferenceField(Customer)  # 顾客
-    stock = fields.ReferenceField(Stock)  # 货物
-    stock_num = fields.StringField()  # 数量
-    stock_price = fields.StringField()  # 单价
-    stock_amount = fields.StringField()  # 金额
+    stock_name = fields.StringField()  # 货物
+    stock_num = fields.IntField(missing=0)  # 数量
+    stock_price = fields.FloatField(missing=0)  # 单价
+    stock_amount = fields.FloatField(missing=0)  # 金额
     is_active = fields.BooleanField(missing=True)  # 记录有效性
     created_time = fields.DateTimeField(missing=datetime.datetime.now)  # 记录时间
 
     @classmethod
-    async def new_c_detail(cls,customer_id='',stock_name='', stock_num='', stock_price='', stock_amount=''):
+    async def new_c_detail(cls, customer_id='', stock_name=''):
         customer = await Customer.find_one({'id': ObjectId(customer_id)})
         stock = await Stock.find_one({'name': stock_name})
+        if stock:
+            return await cls(customer=customer,
+                             stock_name=stock_name,
+                             stock_price=stock.price).commit()
         return await cls(customer=customer,
-                         stock=stock,
-                         stock_num=stock_num,
-                         stock_price=stock_price,
-                         stock_amount=stock_amount).commit()
+                         stock_name=stock_name).commit()
+
+    @classmethod
+    async def get_customer_goods(cls, customer_id=''):
+        return await cls.find({'customer': ObjectId(customer_id)}).to_list(length=None)
+
+    @classmethod
+    async def update_customer_goods(cls, id='', customer_id='', num=0, price=0):
+        customer_goods = await cls.find_one({'id': ObjectId(id), 'customer': ObjectId(customer_id)})
+        if customer_goods:
+            customer_goods.stock_num = num
+            customer_goods.stock_price = price
+            customer_goods.stock_amount = num * price
+            await customer_goods.commit()
+
+
+# 客户付款金额
+@instance.register
+class CustomerRepayDetail(Document):
+    customer = fields.ReferenceField(Customer)  # 顾客
+    money = fields.StringField()  # 金额
+    time = fields.StringField()  # 付款时间
+    is_active = fields.BooleanField(missing=True)  # 记录有效性
+    created_time = fields.DateTimeField(missing=datetime.datetime.now)  # 记录时间
+
+    @classmethod
+    async def new_repay(cls, customer_id='', money='', time=''):
+        customer = await Customer.find_one({'id': ObjectId(customer_id)})
+        try:
+            await cls(customer=customer,
+                      money=money,
+                      time=time).commit()
+            return {'errcode': 0, 'msg': '添加成功'}
+        except:
+            return {'errcode': 1, 'msg': '添加失败'}
+
+    @classmethod
+    async def get_repay_list(cls, customer_id=''):
+        return await cls.find({'customer': ObjectId(customer_id)}).to_list(length=None)

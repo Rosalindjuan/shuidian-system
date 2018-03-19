@@ -3,13 +3,13 @@
     <Crumbs crumbs1="模板" crumbs2="模板列表"></Crumbs>
     <el-table :data="tableData">
       <el-table-column type="index"></el-table-column>
-      <el-table-column prop="name" label="名称" width="150">
+      <el-table-column prop="name" label="名称">
         <template slot-scope="scope">
           <router-link :to="/template_list/+scope.row.id">{{scope.row.name}}</router-link>
         </template>
       </el-table-column>
-      <el-table-column prop="remarks" label="备注" width="200"></el-table-column>
-      <el-table-column label="操作" width="80">
+      <el-table-column prop="remarks" label="备注"></el-table-column>
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button @click="deleteRow(scope.$index, scope.row)" type="text" size="small">删除</el-button>
         </template>
@@ -20,7 +20,8 @@
 
 <script>
   import Crumbs from "../common/Crumbs.vue"
-  import {templateList} from "../../api"
+  import {templateList,deleteTemplate} from "../../api"
+  import {mapMutations, mapState} from 'vuex'
 
 
   export default {
@@ -33,6 +34,8 @@
       }
     },
     methods: {
+      ...mapMutations(['TOSAST_STATE']),
+      // 获取数据
       getData() {
         templateList().then(res => {
           console.log(res)
@@ -42,12 +45,12 @@
         })
       },
       deleteRow(index, row) {
-//        deleteStock({id: row.id}).then(res => {
-//          if(!res.errcode) {
-//            this.tableData.splice(index, 1);
-//          }
-//          alert(res.msg)
-//        })
+        deleteTemplate({id: row.id}).then(res => {
+          this.TOSAST_STATE({text: res.msg})
+          if(!res.errcode) {
+            this.tableData.splice(index, 1);
+          }
+        })
       }
     },
     created() {

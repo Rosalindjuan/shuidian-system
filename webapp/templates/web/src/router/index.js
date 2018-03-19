@@ -31,6 +31,10 @@ export default new Router({
           component: resolve => require(['../components/page/CustomerList.vue'], resolve)
         },
         {
+          path: '/customer_list/:id',
+          component: resolve => require(['../components/page/CustomerDetail.vue'], resolve)
+        },
+        {
           path: '/customer_new',
           component: resolve => require(['../components/page/CustomerNew.vue'], resolve)
         },
@@ -49,6 +53,10 @@ export default new Router({
         {
           path: '/admin_list',
           component: resolve => require(['../components/page/AdminList.vue'], resolve)
+        },
+        {
+          path: '/admin_list/:id',
+          component: resolve => require(['../components/page/AdminDetail.vue'], resolve)
         },
         {
           path: '/admin_new',
