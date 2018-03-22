@@ -42,9 +42,18 @@
       }
     },
     created() {
-      getAdmin({params: {id: this.$route.params.id}}).then(res => {
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      getAdmin({params: {id: this.$route.params.id, token: userInfo.token, username: userInfo.user}}).then(res => {
         if (!res.errcode) {
           this.admin = res.data
+        } else {
+          this.TOSAST_STATE({text: res.msg})
+          if (res.errcode == 2) {
+            setTimeout(() => {
+              localStorage.removeItem('userInfo')
+              this.$router.push('/login');
+            }, 1000)
+          }
         }
       })
     }

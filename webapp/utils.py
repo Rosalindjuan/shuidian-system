@@ -77,7 +77,7 @@ def generateUserToken(uid, user_login):
     data = uid + user_login + str(int(time.time()))
     token = hashlib.md5(data.encode("utf8"))
     # expiretime = int(time.time()) + 3600 * 5
-    expiretime = int(time.time()) + 60 * 5
+    expiretime = int(time.time()) + 60 * 30
     userToken = {
         'token': token.hexdigest(),
         'expiretime': expiretime

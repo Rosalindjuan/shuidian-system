@@ -167,11 +167,46 @@ class UserLogic:
             result = {'errcode': 1, 'msg': '请填写完整'}
         return result
 
+    # 更新客户的物料
     async def updateCusGoods(self, requestData):
         for i in requestData['goodsList']:
             await CustomerGoodsDetail.update_customer_goods(i['id'], requestData['id'], i['stock_num'],
                                                             i['stock_price'])
         return {'errcode': 0, 'msg': '修改成功'}
+
+    # 新建管理员
+    async def createAdmin(self, requestData):
+        if requestData['password'] == requestData['surePsd']:
+            uid = random_str()
+            ifuser = True
+            while ifuser:
+                ifuser = await Users.find_one({"uid": uid})
+                if ifuser:
+                    uid = random_str()
+                else:
+                    ifuser = False
+            user_login = str(COMMON_USER_TYPE) + str(int(time.time())) + random_str()
+            userToken = generateUserToken(uid, user_login)
+            result = await Users.new_user(uid, userToken['token'], requestData['user'], requestData['password'],
+                                          requestData['name'], requestData['department'], requestData['position'],
+                                          requestData['tel'], requestData['email'], requestData['qq'],
+                                          requestData['wechat'], expires_time=userToken['expiretime'])
+            return result
+        return {'errcode': 1, 'msg': '两次密码不一致'}
+
+    # 管理员详情
+    async def getAdminDetail(self, requestData):
+        user = await Users.get_user(requestData['id'])
+        if user:
+            data = {'username': user.user, 'name': user.real_name, 'tel': user.tel, 'department': user.department,
+                    'position': user.position, 'email': user.email, 'qq': user.qq, 'wechat': user.wechat}
+            return {'errcode': 0, 'msg': '', 'data': data}
+
+        return {'errcode': 1, 'msg': '无该管理员！'}
+
+    # 删除管理员
+    async def deleteAdmin(self, requestData):
+        return await Users.delete_user(requestData['id'])
 
 
 # 物料
@@ -304,6 +339,12 @@ async def updateCusGoods(request):
 
 
 class Adminitors(web.View):
+    # 新建管理员
+    async def put(self):
+        requestData = json.loads((await self.request.content.read()).decode('utf-8'))
+        result = await judgeUser(requestData, UserLogic().createAdmin)
+        return web.json_response(result)
+
     # 管理员列表
     async def get(self):
         users = await Users.get_users()
@@ -314,33 +355,17 @@ class Adminitors(web.View):
                  'is_active': i.is_active})
         return web.json_response({'errcode': 0, 'msg': '', 'data': {'list': list}})
 
-    # 新建管理员
-    async def put(self):
-        requestData = json.loads((await self.request.content.read()).decode('utf-8'))
-        print(requestData)
-        if requestData['password'] == requestData['surePsd']:
-            result = await Users.new_user(requestData['username'], requestData['password'], requestData['name'],
-                                          requestData['department'],
-                                          requestData['position'], requestData['tel'], requestData['email'],
-                                          requestData['qq'],
-                                          requestData['wechat'])
-            return web.json_response(result)
-        return web.json_response({'errcode': 1, 'msg': '两次密码不一致'})
-
     # 删除管理员
     async def post(self):
         requestData = json.loads((await self.request.content.read()).decode('utf-8'))
-        result = await Users.delete_user(requestData['id'])
+        result = await judgeUser(requestData, UserLogic().deleteAdmin)
         return web.json_response(result)
 
 
 class Adminitor(web.View):
+    # 管理员详情
     async def get(self):
         query = dict(self.request.query)
-        user = await Users.get_user(query['id'])
-        if user:
-            data = {'username': user.user, 'name': user.real_name, 'tel': user.tel, 'department': user.department,
-                    'position': user.position, 'email': user.email, 'qq': user.qq, 'wechat': user.wechat}
-            return web.json_response({'errcode': 0, 'msg': '', 'data': data})
-
-        return web.json_response({'errcode': 1, 'msg': '无该管理员！'})
+        requestData = {'username': query['username'], 'token': query['token'], 'id': query['id']}
+        result = await judgeUser(requestData, UserLogic().getAdminDetail)
+        return web.json_response(result)

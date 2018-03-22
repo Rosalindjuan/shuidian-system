@@ -51,20 +51,37 @@
       ...mapMutations(['TOSAST_STATE']),
       // 删除一条数据
       deleteRow(index, row) {
-        deleteAdmin({id: row.id}).then(res => {
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        deleteAdmin({token: userInfo.token, username: userInfo.user, id: row.id}).then(res => {
+          this.TOSAST_STATE({text: res.msg})
           if (!res.errcode) {
             this.tableData.splice(index, 1);
+          } else {
+            if (res.errcode == 2) {
+              setTimeout(() => {
+                localStorage.removeItem('userInfo')
+                this.$router.push('/login');
+              }, 1000)
+            }
           }
-          this.TOSAST_STATE({text: res.msg})
         })
       }
     },
     created() {
-      getAdminList().then(res => {
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      getAdminList({token: userInfo.token, username: userInfo.user}).then(res => {
         console.log(res)
         if (!res.errcode) {
           this.tableData = res.data.list
           console.log(this.tableData)
+        } else {
+          this.TOSAST_STATE({text: res.msg})
+          if (res.errcode == 2) {
+            setTimeout(() => {
+              localStorage.removeItem('userInfo')
+              this.$router.push('/login');
+            }, 1000)
+          }
         }
       })
     }
