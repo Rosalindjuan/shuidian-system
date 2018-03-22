@@ -12,6 +12,15 @@
       <el-table-column prop="address" label="住址" width="250"></el-table-column>
       <el-table-column prop="remarks" label="备注" width="200"></el-table-column>
     </el-table>
+    <!--<div class="pagination">-->
+      <!--<el-pagination-->
+        <!--background-->
+        <!--layout="prev, pager, next"-->
+        <!--:total="dataSum"-->
+        <!--:page-size="perPage"-->
+        <!--@current-change="handleCurrentChange">-->
+      <!--</el-pagination>-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -29,7 +38,8 @@
       }
     },
     created() {
-      getCustomers().then(res => {
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      getCustomers({token: userInfo.token, username: userInfo.user}).then(res => {
         if(!res.errcode) {
           this.tableData = res.data
         }

@@ -84,11 +84,11 @@
     </div>
 
     <!--<el-dialog title="提示" :visible.sync="dialogVisible" width="30%">-->
-      <!--<span>这里是添加物料的信息</span>-->
-      <!--<span slot="footer" class="dialog-footer">-->
-        <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
-        <!--<el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
-      <!--</span>-->
+    <!--<span>这里是添加物料的信息</span>-->
+    <!--<span slot="footer" class="dialog-footer">-->
+    <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
+    <!--<el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
+    <!--</span>-->
     <!--</el-dialog>-->
   </div>
 </template>
@@ -144,16 +144,23 @@
     methods: {
       ...mapMutations(['TOSAST_STATE']),
 
-      addGoods(){
+      addGoods() {
 
       },
       // 修改客户信息
       onSubmitCus() {
         this.$refs['rulesform'].validate((valid) => {
           if (valid) {
-            let params = {id: this.$route.params.id, form: this.form}
+            let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            let params = {token: userInfo.token, username: userInfo.user, id: this.$route.params.id, form: this.form}
             updateCustomer(params).then(res => {
               this.TOSAST_STATE({text: res.msg})
+              if (res.errcode == 2) {
+                setTimeout(() => {
+                  localStorage.removeItem('userInfo')
+                  this.$router.push('/login');
+                }, 1000)
+              }
             })
           } else {
             return false;
@@ -162,13 +169,25 @@
       },
       // 用料提交
       onSubmitGoods() {
-        let params = {id: this.$route.params.id, goodsList: this.goodsList}
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        let params = {
+          token: userInfo.token,
+          username: userInfo.user,
+          id: this.$route.params.id,
+          goodsList: this.goodsList
+        }
         updateCusGoods(params).then(res => {
           this.TOSAST_STATE({text: res.msg})
+          if (res.errcode == 2) {
+            setTimeout(() => {
+              localStorage.removeItem('userInfo')
+              this.$router.push('/login');
+            }, 1000)
+          }
         })
       },
       judgeRepayMoney() {
-        if(this.repay.repayMoney){
+        if (this.repay.repayMoney) {
           return true
         } else {
           this.TOSAST_STATE({text: '请输入付款金额'})
@@ -176,7 +195,7 @@
         }
       },
       judgeRepayTime() {
-        if(this.repay.repayTime){
+        if (this.repay.repayTime) {
           return true
         } else {
           this.TOSAST_STATE({text: '请选择付款日期'})
@@ -187,27 +206,51 @@
       addRepay() {
         if (this.judgeRepayMoney() && this.judgeRepayTime()) {
           console.log(this.judgeRepayMoney && this.judgeRepayTime)
-          let param = {id: this.$route.params.id, amount: this.repay.repayMoney, time: this.repay.repayTime}
+          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+          let param = {
+            token: userInfo.token,
+            username: userInfo.user,
+            id: this.$route.params.id,
+            amount: this.repay.repayMoney,
+            time: this.repay.repayTime
+          }
           addCusRepay(param).then(res => {
 //            console.log('添加付款',res)
             this.TOSAST_STATE({text: res.msg})
-            if(!res.errcode) {
+            if (!res.errcode) {
               // 添加付款信息 提交
               this.repayList.push({amount: this.repay.repayMoney, time: this.repay.repayTime})
               this.repay.repayMoney = ''
               this.repay.repayTime = ''
+            } else {
+              if (res.errcode == 2) {
+                setTimeout(() => {
+                  localStorage.removeItem('userInfo')
+                  this.$router.push('/login');
+                }, 1000)
+              }
             }
           })
         }
       }
     },
     created() {
-      let param = {params: {id: this.$route.params.id}}
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      let param = {params: {id: this.$route.params.id, token: userInfo.token, username: userInfo.user}}
       getCustomer(param).then(res => {
+        console.log(res)
         if (!res.errcode) {
           this.form = res.data.info
           this.goodsList = res.data.goods_list
           this.repayList = res.data.repay_list
+        } else {
+          this.TOSAST_STATE({text: res.msg})
+          if (res.errcode == 2) {
+            setTimeout(() => {
+              localStorage.removeItem('userInfo')
+              this.$router.push('/login');
+            }, 1000)
+          }
         }
       })
     }

@@ -78,7 +78,13 @@
         this.$refs['rulesform'].validate((valid) => {
           if (valid) {
             if (this.checkedStocks.length > 0) {
-              let params = {form: this.form, checkedStocks: this.checkedStocks}
+              let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+              let params = {
+                token: userInfo.token,
+                username: userInfo.user,
+                form: this.form,
+                checkedStocks: this.checkedStocks
+              }
               newCustomer(params).then(res => {
                 this.TOSAST_STATE({text: res.msg})
                 if (!res.errcode) {
@@ -103,9 +109,18 @@
       }
     },
     created() {
-      templateList().then(res => {
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      templateList({token: userInfo.token, username: userInfo.user}).then(res => {
         if (!res.errcode) {
           this.templateList = res.data.list
+        } else {
+          this.TOSAST_STATE({text: res.msg})
+          if (res.errcode == 2) {
+            setTimeout(() => {
+              localStorage.removeItem('userInfo')
+              this.$router.push('/login');
+            }, 1000)
+          }
         }
       })
     }

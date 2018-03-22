@@ -115,12 +115,63 @@ class UserLogic:
         temList = await GoodsTemplate.goods_template_list()
         data = []
         for item in temList:
-            data.append({'name': item.name, 'remarks': item.remarks, 'id': str(item.id)})
+            goods = await GoodsTemplate.get_tem_goods_list(str(item.id))
+            data.append({'name': item.name, 'remarks': item.remarks, 'id': str(item.id), 'goods': goods['list']})
         return {'errcode': 0, 'msg': '', 'data': {'list': data}}
 
     # 删除模板
     async def deleteTem(self, requestData):
         return await GoodsTemplate.delete_goods_template(requestData['id'])
+
+    # 创建客户
+    async def createCustomer(self, requestData):
+        if len(requestData['checkedStocks']) > 0:
+            customer = await Customer.new_customer(requestData['form']['name'], requestData['form']['address'],
+                                                   requestData['form']['tel'], requestData['form']['remarks'])
+            for i in requestData['checkedStocks']:
+                await CustomerGoodsDetail.new_c_detail(customer.inserted_id, i)
+            return {'errcode': 0, 'msg': '创建新客户成功'}
+        return {'errcode': 1, 'msg': '请选择客户所需的物料'}
+
+    # 获取客户信息
+    async def getCustomer(self, requestData):
+        customer = await Customer.get_customer(requestData['id'])
+        customer_goods = await CustomerGoodsDetail.get_customer_goods(requestData['id'])
+        customer_repay = await CustomerRepayDetail.get_repay_list(requestData['id'])
+        goods_list = []
+        repay_list = []
+        if customer_goods:
+            for goods in customer_goods:
+                goods_list.append(
+                    {'id': str(goods.id), 'stock_name': goods.stock_name, 'stock_num': goods.stock_num,
+                     'stock_price': goods.stock_price, 'stock_amount': goods.stock_amount})
+        if customer_repay:
+            for repay in customer_repay:
+                repay_list.append({'amount': repay.money, 'time': repay.time})
+        if customer:
+            data = {'name': customer.name, 'tel': customer.tel, 'address': customer.address,
+                    'remarks': customer.remarks}
+            return {'errcode': 0, 'msg': '', 'data': {'info': data, 'goods_list': goods_list, 'repay_list': repay_list}}
+        return {'errcode': 1, 'msg': '无此客户'}
+
+    # 更新客户信息
+    async def updateCus(self, requestData):
+        return await Customer.update_customer(requestData['id'], requestData['form']['address'],
+                                              requestData['form']['tel'], requestData['form']['remarks'])
+
+    # 添加客户付款信息
+    async def addCusRepay(self, requestData):
+        if requestData['amount'] and requestData['time']:
+            result = await CustomerRepayDetail.new_repay(requestData['id'], requestData['amount'], requestData['time'])
+        else:
+            result = {'errcode': 1, 'msg': '请填写完整'}
+        return result
+
+    async def updateCusGoods(self, requestData):
+        for i in requestData['goodsList']:
+            await CustomerGoodsDetail.update_customer_goods(i['id'], requestData['id'], i['stock_num'],
+                                                            i['stock_price'])
+        return {'errcode': 0, 'msg': '修改成功'}
 
 
 # 物料
@@ -212,15 +263,8 @@ class Customers(web.View):
     # 新建客户
     async def put(self):
         requestData = json.loads((await self.request.content.read()).decode('utf-8'))
-        # print(requestData)
-        if len(requestData['checkedStocks']) > 0:
-            customer = await Customer.new_customer(requestData['form']['name'], requestData['form']['address'],
-                                                   requestData['form']['tel'], requestData['form']['remarks'])
-            # print(customer.inserted_id)
-            for i in requestData['checkedStocks']:
-                await CustomerGoodsDetail.new_c_detail(customer.inserted_id, i)
-            return web.json_response({'errcode': 0, 'msg': '创建新客户成功'})
-        return web.json_response({'errcode': 1, 'msg': '请选择客户所需的物料'})
+        result = await judgeUser(requestData, UserLogic().createCustomer)
+        return web.json_response(result)
 
     # 获取客户列表
     async def post(self):
@@ -233,60 +277,30 @@ class Customers(web.View):
     # 客户信息
     async def get(self):
         query = dict(self.request.query)
-        customer = await Customer.get_customer(query['id'])
-        customer_goods = await CustomerGoodsDetail.get_customer_goods(query['id'])
-        customer_repay = await CustomerRepayDetail.get_repay_list(query['id'])
-        goods_list = []
-        repay_list = []
-
-        if customer_goods:
-            for goods in customer_goods:
-                goods_list.append(
-                    {'id': str(goods.id), 'stock_name': goods.stock_name, 'stock_num': goods.stock_num,
-                     'stock_price': goods.stock_price,
-                     'stock_amount': goods.stock_amount})
-
-        if customer_repay:
-            for repay in customer_repay:
-                repay_list.append(
-                    {'amount': repay.money, 'time': repay.time})
-        if customer:
-            data = {'name': customer.name, 'tel': customer.tel, 'address': customer.address,
-                    'remarks': customer.remarks}
-            return web.json_response(
-                {'errcode': 0, 'msg': '', 'data': {'info': data, 'goods_list': goods_list, 'repay_list': repay_list}})
-        return web.json_response({'errcode': 1, 'msg': '无此客户'})
-
-
-# 添加客户付款信息
-async def addRepay(request):
-    requestData = json.loads((await request.content.read()).decode('utf-8'))
-    print(requestData)
-    if requestData['amount'] and requestData['time']:
-        result = await CustomerRepayDetail.new_repay(requestData['id'], requestData['amount'], requestData['time'])
+        requestData = {'token': query['token'], 'username': query['username'], 'id': query['id']}
+        result = await judgeUser(requestData, UserLogic().getCustomer)
         return web.json_response(result)
-    else:
-        return web.json_response({'errcode': 1, 'msg': '请填写完整'})
 
 
 # 更新客户基本信息
 async def updateCustomer(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    print('updateCustomer', requestData)
-    result = await Customer.update_customer(requestData['id'], requestData['form']['address'],
-                                            requestData['form']['tel'], requestData['form']['remarks'])
+    result = await judgeUser(requestData, UserLogic().updateCus)
+    return web.json_response(result)
 
+
+# 添加客户付款信息
+async def addRepay(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await judgeUser(requestData, UserLogic().addCusRepay)
     return web.json_response(result)
 
 
 # 更新客户用料信息
 async def updateCusGoods(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    print('updateCusGoods', requestData)
-    for i in requestData['goodsList']:
-        await CustomerGoodsDetail.update_customer_goods(i['id'], requestData['id'], i['stock_num'], i['stock_price'])
-
-    return web.json_response({'errcode': 0, 'msg': '修改成功'})
+    result = await judgeUser(requestData, UserLogic().updateCusGoods)
+    return web.json_response(result)
 
 
 class Adminitors(web.View):
