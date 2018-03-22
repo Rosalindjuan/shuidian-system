@@ -41,6 +41,14 @@
         templateList({token: userInfo.token, username: userInfo.user}).then(res => {
           if (!res.errcode) {
             this.tableData = res.data.list;
+          } else {
+            this.TOSAST_STATE({text: res.msg})
+            if (res.errcode == 2) {
+              setTimeout(() => {
+                localStorage.removeItem('userInfo')
+                this.$router.push('/login');
+              }, 1000)
+            }
           }
         })
       },
@@ -50,6 +58,13 @@
           this.TOSAST_STATE({text: res.msg})
           if (!res.errcode) {
             this.tableData.splice(index, 1);
+          } else {
+            if (res.errcode == 2) {
+              setTimeout(() => {
+                localStorage.removeItem('userInfo')
+                this.$router.push('/login');
+              }, 1000)
+            }
           }
         })
       }

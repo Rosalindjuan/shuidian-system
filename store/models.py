@@ -217,7 +217,7 @@ class GoodsTemplate(Document):
         for item in goods:
             stock = await Stock.find_one({'name': item})
             list.append(stock)
-        print('new_goods_template', list)
+        # print('new_goods_template', list)
         await cls(name=name,
                   goods=list,
                   remarks=remarks).commit()

@@ -94,6 +94,34 @@ class UserLogic:
             namelist.append(item.name)
         return {'errcode': 0, 'msg': '', 'data': {'list': namelist}}
 
+    # 创建模板
+    async def createTem(self, requestData):
+        return await GoodsTemplate.new_goods_template(requestData['name'], requestData['remarks'], requestData['goods'])
+
+    # 模板详情
+    async def templateDetail(self, requestData):
+        data = await GoodsTemplate.get_tem_goods_list(requestData['id'])
+        if data:
+            return {'errcode': 0, 'msg': '', 'data': data}
+        return {'errcode': 1, 'msg': '无此模板'}
+
+    # 更新模板
+    async def updateTem(self, requestData):
+        return await GoodsTemplate.update_goods_template(requestData['name'], requestData['remarks'],
+                                                         requestData['goods'])
+
+    # 模板列表
+    async def getTemList(self, requestData):
+        temList = await GoodsTemplate.goods_template_list()
+        data = []
+        for item in temList:
+            data.append({'name': item.name, 'remarks': item.remarks, 'id': str(item.id)})
+        return {'errcode': 0, 'msg': '', 'data': {'list': data}}
+
+    # 删除模板
+    async def deleteTem(self, requestData):
+        return await GoodsTemplate.delete_goods_template(requestData['id'])
+
 
 # 物料
 
@@ -147,43 +175,36 @@ async def getStockNames(request):
 # 创建模板
 async def newTemplate(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    result = await GoodsTemplate.new_goods_template(requestData['name'], requestData['remarks'], requestData['goods'])
+    result = await judgeUser(requestData, UserLogic().createTem)
+    return web.json_response(result)
+
+
+# 模板详情
+async def temDetail(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await judgeUser(requestData, UserLogic().templateDetail)
+    return web.json_response(result)
+
+
+# 修改模板信息
+async def updateTemplate(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await judgeUser(requestData, UserLogic().updateTem)
     return web.json_response(result)
 
 
 # 模板列表
 async def temList(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    list = await GoodsTemplate.goods_template_list()
-    data = []
-    for l in list:
-        goods_list = await GoodsTemplate.get_tem_goods_list(str(l.id))
-        data.append({'name': l.name, 'remarks': l.remarks, 'id': str(l.id), 'goods': goods_list['list']})
-    return web.json_response({'errcode': 0, 'msg': '', 'data': {'list': data}})
-
-
-# 模板货物列表
-async def temGoodsList(request):
-    requestData = json.loads((await request.content.read()).decode('utf-8'))
-    data = await GoodsTemplate.get_tem_goods_list(requestData['id'])
-    if data:
-        return web.json_response({'errcode': 0, 'msg': '', 'data': data})
-    return web.json_response({'errcode': 1, 'msg': '无此模板'})
-
-
-# 修改模板信息
-async def updateTemplate(request):
-    requestData = json.loads((await request.content.read()).decode('utf-8'))
-    result = await GoodsTemplate.update_goods_template(requestData['name'], requestData['remarks'],
-                                                       requestData['goods'])
+    result = await judgeUser(requestData, UserLogic().getTemList)
     return web.json_response(result)
 
 
 # 删除模板
 async def deleteTemplate(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    result = await GoodsTemplate.delete_goods_template(requestData['id'])
-    return web.json_response({'errcode': 0, 'msg': '已删除'})
+    result = await judgeUser(requestData, UserLogic().deleteTem)
+    return web.json_response(result)
 
 
 # 客户

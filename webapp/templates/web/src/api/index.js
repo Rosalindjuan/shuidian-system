@@ -38,9 +38,9 @@ export const templateList = (params) => {
 }
 
 
-// 模板货物列表
+// 模板详情
 export const temGoodsList = (params) => {
-  return http.fetchPost('/tem_goods_list', params)
+  return http.fetchPost('/tem_detail', params)
 }
 
 // 更新模板

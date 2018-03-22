@@ -79,12 +79,24 @@
       },
       // 提交
       onSubmit() {
-//        console.log(this.checkedStocks, 'submit')
         if (this.checkStock() && this.checkname()) {
-          let param = {name: this.name, remarks: this.remarks, goods: this.checkedStocks}
+          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+          let param = {
+            username: userInfo.user,
+            token: userInfo.token,
+            name: this.name,
+            remarks: this.remarks,
+            goods: this.checkedStocks
+          }
           if (this.readonly) { // 更新模板
             updateTemplate(param).then(res => {
               this.TOSAST_STATE({text: res.msg})
+              if (res.errcode == 2) {
+                setTimeout(() => {
+                  localStorage.removeItem('userInfo')
+                  this.$router.push('/login');
+                }, 1000)
+              }
             })
           } else { // 新建模板
             newTemplate(param).then(res => {
@@ -95,6 +107,13 @@
                 this.checkedStocks = this.stocks
                 this.isIndeterminate = false;
                 this.checkAll = true
+              } else {
+                if (res.errcode == 2) {
+                  setTimeout(() => {
+                    localStorage.removeItem('userInfo')
+                    this.$router.push('/login');
+                  }, 1000)
+                }
               }
             })
           }
@@ -120,10 +139,10 @@
         if (this.$route.params.id) {
           this.crumbs2 = '模板详情'
           this.readonly = true
-          let param = {id: this.$route.params.id}
-//          console.log('模板详情')
+          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+          let param = {username: userInfo.user, token: userInfo.token, id: this.$route.params.id}
           temGoodsList(param).then(res => {
-//            console.log(res)
+            console.log(res)
             if (!res.errcode) {
               this.name = res.data.name
               this.remarks = res.data.remarks
@@ -147,10 +166,18 @@
     },
     created() {
       let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      getStocks({username: userInfo.user,token: userInfo.token}).then(res => {
+      getStocks({username: userInfo.user, token: userInfo.token}).then(res => {
         if (!res.errcode) {
           this.stocks = res.data.list
           this.setDetail()
+        } else {
+          this.TOSAST_STATE({text: res.msg})
+          if (res.errcode == 2) {
+            setTimeout(() => {
+              localStorage.removeItem('userInfo')
+              this.$router.push('/login');
+            }, 1000)
+          }
         }
       })
 
