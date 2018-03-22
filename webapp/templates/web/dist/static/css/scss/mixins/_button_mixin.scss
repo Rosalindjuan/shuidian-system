@@ -1,0 +1,45 @@
+// Button variants
+// 简单地定义颜色默认样式，以及hover、active、focus
+
+@mixin button-variant($color,$background,$border) {
+	color:$color;
+	background-color: $background;
+	border-color: $border;
+
+	&:focus,
+	&.focus {
+		color: $color;
+		background-color: darken($background,10%);
+		border-color: darken($border, 25%);
+	}
+	&:hover {
+	    color: $color;
+	    background-color: darken($background, 10%);
+        border-color: darken($border, 12%);
+  	}
+  	&:active,
+  	&.active{
+  		color: $color;
+	    background-color: darken($background, 10%);
+        border-color: darken($border, 12%);
+  	}
+  	&.disabled,
+  	&[disabled]{
+  		&:hover,
+	    &:focus,
+	    &.focus {
+	      	background-color: $background;
+	      	border-color: $border;
+	      	cursor: not-allowed !important;
+	    }
+  	}
+}
+
+
+// Button size,包含内边距、字体大小、行高、圆角
+@mixin button-size($padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius) {
+	padding: $padding-vertical $padding-horizontal;
+	font-size: $font-size;
+	line-height: $line-height;
+	border-radius: $border-radius;
+}

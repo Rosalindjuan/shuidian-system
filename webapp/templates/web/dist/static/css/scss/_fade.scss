@@ -1,0 +1,7 @@
+.fade {
+	@include opacity(0);
+    @include transition(opacity .15s linear);
+}
+.fade.in {
+    @include opacity(1);
+}

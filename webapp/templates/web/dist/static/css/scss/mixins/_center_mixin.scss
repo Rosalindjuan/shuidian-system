@@ -1,0 +1,37 @@
+//center block
+@mixin center-block() {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/*绝对定位居中另外一种方法，top:0;bottom:0;left:0;right:0;margin:auto*/ 
+@mixin center-position($width:null,$height:null){
+	position:absolute;
+	top: 50%;
+	left: 50%;
+
+		@if not $width and not $height {
+			transform:translate(-50%,-50%);
+		} @else if $width and $height {
+			width: $width;
+			height:$height;
+			margin-top: $height/2*-1;
+			margin-left: $width/2*-1;
+		} @else if not $width {
+			height: $height;
+			margin-top: $height/2*-1;
+			transform: translate(-50%,0);
+		} @else {
+			width: $width;
+			margin-left: $width/2*-1;
+			transform: translate(0,-50%)
+		}	
+}
+
+/*行内居中，利用text-align来实现水平居中，line-height:实现垂直居中*/ 
+@mixin center-line($height){
+	text-align: center;
+	height: $height;
+	line-height: $height;
+}

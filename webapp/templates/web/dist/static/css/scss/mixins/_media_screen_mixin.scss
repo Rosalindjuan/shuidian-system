@@ -1,0 +1,28 @@
+
+/*media quiery,移动端优先*/
+$media-stack:
+	(group: xsmall,id: general,rule:"only screen and (max-width: #{$screen-xs})"),
+	(group: xsmall,id: inbetween,rule:"only screen and (min-width: #{$screen-xs}) and (max-width: #{$screen-sm})"),
+	(group: small,id: general,rule:"only screen and (max-width: #{$screen-sm})"),
+	(group: small, id: inbetween, rule: "only screen and (min-width: #{$screen-sm}) and (max-width: #{$screen-md})"),
+	(group: medium, id: general, rule: "only screen and (max-width: #{$screen-md})"),
+	(group: medium, id: min, rule: "only screen and (min-width: #{$screen-md})"),
+	(group: medium, id: inbetween, rule: "only screen and (min-width: #{$screen-md}) and (max-width: #{$screen-lg})"),
+	(group: large, id: general, rule: "only screen and (min-width: #{$screen-lg})"),
+  	(group: print, id: general, rule: "only print"),
+  	(group: custom, id: general, rule: "only screen and ");
+
+@mixin media($group,$id:general,$rules:null){
+	@each $media in $media-stack{
+		@if ($group == map-get($media,group)) and ($id == map-get($media,id)){
+			@if $rules {
+				$rule:map-get($media,rule)+$rules;
+				@media #{$rule} {@content};
+			}
+			@else {
+				$rule:map-get($media,rule);
+				@media #{$rule} {@content};
+			}			
+		}
+	}
+}

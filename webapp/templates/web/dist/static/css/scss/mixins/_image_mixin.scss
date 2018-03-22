@@ -1,0 +1,27 @@
+// Image Mixins
+// - Responsive image
+// - Retina image
+
+
+// Responsive image
+//
+// Keep images from scaling beyond the width of their parents.
+@mixin img-responsive($display: block) {
+  display: $display;
+  max-width: 100%; // Part 1: Set a maximum relative to the parent
+  height: auto; // Part 2: Scale the height according to the width, otherwise you get stretching
+}
+
+
+// Retina image
+//
+// Short retina mixin for setting background-image and -size. Note that the
+
+@mixin img-retina($file, $repeat:no-repeat, $pos-1:0, $pos-2:0, $width-1x:null, $height-1x:null) {
+  background-image: url($file);
+  background-repeat: $repeat;
+  background-position:$pos-1 $pos-2;
+  @if $width-1x and $height-1x{
+    background-size: $width-1x $height-1x;
+  }
+}

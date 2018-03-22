@@ -1,0 +1,14 @@
+/*提供inline-block对齐方式*/ 
+$line-alignment:middle !default; // 设置默认对齐方式
+$legacy-support-for-ie:true !default; // 兼容ie低版本
+@mixin inline-block($alignment:$line-alignment){
+	display: inline-block;
+	@if $alignment and $alignment != none{
+		vertical-align: $alignment;
+	}
+	@if $legacy-support-for-ie{
+		*display: inline;
+		zoom:1;
+		*vertical-align: auto;
+	} 
+}

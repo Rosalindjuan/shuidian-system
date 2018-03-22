@@ -1,0 +1,216 @@
+files explain:
+
+mixin File Folder：
+
+a:
+
+	--- alert_mixin.scss
+		---alert-variant($background, $border, $text-color)
+			---hr
+			---.alert-link
+
+b:
+
+	--- background_variant_mixin.scss
+		---bg-variant($parent, $color)
+			---a#{$parent}:hover
+			---a#{$parent}:focus
+
+	--- border_radius_mixin.scss
+		---border-top-radius($radius)
+		---border-right-radius($radius)
+		---border-bottom-radius($radius)
+		---border-left-radius($radius)
+
+	--- button_mixin.scss
+		---button-variants($color,$background,$border)
+			---&:focus 
+			---&:hover 
+			---&:active 
+			---&.disabled
+		---button-size($padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius)
+
+c:
+
+	--- center_mixin.scss
+		---center-block:block and margin
+		---center-position($width,$height):transform or margin
+		---center-line($height):line-height
+
+f:
+
+	--- float_clearfix_mixin.scss
+		---float($side:left)
+		---reset-float($display:block)
+		---clearfix:clear float
+
+	--- forms_mixin.scss
+		---form-control-validation($text-color: #555, $border-color: #ccc, $background-color: #f5f5f5): 
+			---.help-block,
+				.control-label,
+				.radio,
+				.checkbox,
+				.radio-inline,
+				.checkbox-inline,
+				&.radio label,
+				&.checkbox label,
+				&.radio-inline label,
+				&.checkbox-inline label 
+			---.form-control
+				---&:focus
+			---.input-group-addon
+			---.form-control-feedback
+		---form-control-focus($color: $input-border-focus)
+			---&:focus
+		---input-size($parent, $input-height, $padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius)
+			---#{$parent}
+			---select#{$parent}
+			---textarea#{$parent},select[multiple]#{$parent}
+
+g:
+
+	--- gradients_mixin.scss
+		---gradient-horizontal($start-color:#555,$end-color:#333,$start-percent:0%,$end-percent:100%):two color in the horizontal gradient
+		---gradient-vertical($start-color:#555,$end-color:#333,$start-percent:0%,$end-percent:100%):two color in the vertical gradient
+		---gradient-directional($start-color: #555, $end-color: #333, $deg: 45deg):two color and direction in the gradient
+		---gradient-horizontal-three-colors($start-color: #00b3ee, $mid-color: #7a43b6, $color-stop: 50%, $end-color: #c3325f)
+		---gradient-vertical-three-colors($start-color: #00b3ee, $mid-color: #7a43b6, $color-stop: 50%, $end-color: #c3325f)
+		---gradient-radial($inner-color: #555, $outer-color: #333)
+		---gradient-striped($color: rgba(255,255,255,.15), $angle: 45deg)
+
+i:
+
+	--- image_mixin.scss
+		---img-responsive($display:block):img
+		---img-retina($file, $repeat:no-repeat, $pos-1:0, $pos-2:0, $width-1x:null, $height-1x:null):bakcground-image
+
+l:
+
+	--- labels_mixin.scss
+		---label-variant($color)
+			---&[href]
+				---&:hover,&:focus
+
+m:
+
+	--- media_mixin.scss
+		---media($group,$id:general,$rules:null)
+
+n:
+
+	--- nav_divider_mixin.scss
+		---nav-divider($color: #e5e5e5):$line-height-computed
+
+	--- nav_vertical_align_mixin.scss
+		---navbar-vertical-align($element-height):$navbar-height
+
+o:
+
+	--- opacity_mixin.scss
+		---opacity($opacity):$opacity between 0-1
+
+p:
+
+	--- pagination_mixin.scss
+		---pagination-size($padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius)
+			--- > li 
+				---	> a,> span
+				---&:first-child
+					--- > a,> span
+				---&:last-child
+					--- > a,> span
+
+	--- progress_bars_mixin.scss
+		---progress-bar-variant($color)
+			---.progress-striped &
+
+r:
+
+	--- reset_filter_mixin.scss
+		---reset-filter():remove a gradient background for ie9 and below
+
+	--- reset_text_mixin.scss
+		---reset-text():no reset font-size
+
+	--- resize_mixin.scss
+		---resizable($direction)
+
+	--- responsive _visiblity_mixin.scss
+		---responsive-visibility($parent)
+			---#{$parent}
+			---table#{$parent}
+			---tr#{$parent}
+			---th#{$parent},td#{$parent}
+		---responsive-invisibility($parent)
+			---#{$parent}
+
+s:
+
+	--- size_mixin.scss
+		---size($width, $height)
+		---square($size):width and height are same
+
+t:
+
+	--- text_hide_mixin.scss
+		---text-hide()
+
+	--- text_overflow_mixin.scss
+		---more-text-ellipsis($line:4)
+		---singleline-ellipsis($substract:0)
+
+	--- tab_focus_mixin.scss
+		---tab-focus():outline attribute
+
+	--- table_row_mixin.scss
+		---table-row-variant($state, $background)
+			---.table > thead > tr,.table > tbody > tr,.table > tfoot > tr
+				---> td.#{$state},> th.#{$state},&.#{$state} > td,&.#{$state} > th 
+		---.table-hover > tbody > tr
+			---> td.#{$state}:hover,> th.#{$state}:hover,&.#{$state}:hover > td,&:hover > .#{$state},&.#{$state}:hover > th
+
+	--- text_emphasis_variant_mixin.scss
+		---#{$parent}
+		---a#{$parent}:hover,a#{$parent}:focus
+
+	--- vertical_mixin.scss
+		---inline-block($alignment:$line-alignment):$line-alignment:middle
+
+v:
+
+	--- vendor_preflxes_mixin.scss
+		---animation($animation)
+		---animation-name($name)
+		---animation-duration($duration)
+		---animation-timing-function($timing-function)
+		---animation-delay($delay)
+		---animation-iteration-count($iteration-count)
+		---animation-direction($direction)
+		---animation-fill-mode($fill-mode)
+		---backface-visibility($visibility)
+		---box-shadow($shadow)
+		---box-sizing($boxmodel)
+		---content-columns($column-count, $column-gap: $grid-gutter-width)
+		---hyphens($mode: auto)
+		---placeholder($color: $input-color-placeholder)
+		---scale($ratio)
+		---scaleX($ratio)
+		---scaleY($ratio)
+		---translate($x, $y)
+		---translate3d($x, $y, $z)
+		---rotate($degrees)
+		---rotateX($degrees)
+		---rotateY($degrees)
+		---perspective($perspective)
+		---perspective-origin($perspective)
+		---transform-origin($origin)
+		---transition($transition)
+		---transition-property($transition-property)
+		---transition-delay($transition-delay)
+		---transition-duration($transition-duration)
+		---transition-timing-function($timing-function)
+		---transition-transform($transition)
+		---user-select($select)
+	--- verrtical_mixin.scss
+		---inline-block($alignment:$line-alignment)
+
