@@ -23,8 +23,8 @@
         },
         computed:{
             username(){
-                let username = localStorage.getItem('ms_username');
-                return username ? username : this.name;
+                let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+                return userInfo ? userInfo.user : this.name;
             }
         },
         methods:{

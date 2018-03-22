@@ -20,7 +20,7 @@
 
 <script>
   import Crumbs from "../common/Crumbs.vue"
-  import {templateList,deleteTemplate} from "../../api"
+  import {templateList, deleteTemplate} from "../../api"
   import {mapMutations, mapState} from 'vuex'
 
 
@@ -28,7 +28,7 @@
     components: {
       Crumbs
     },
-    data(){
+    data() {
       return {
         tableData: []
       }
@@ -37,17 +37,18 @@
       ...mapMutations(['TOSAST_STATE']),
       // 获取数据
       getData() {
-        templateList().then(res => {
-          console.log(res)
-          if(!res.errcode) {
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        templateList({token: userInfo.token, username: userInfo.user}).then(res => {
+          if (!res.errcode) {
             this.tableData = res.data.list;
           }
         })
       },
       deleteRow(index, row) {
-        deleteTemplate({id: row.id}).then(res => {
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        deleteTemplate({token: userInfo.token, username: userInfo.user, id: row.id}).then(res => {
           this.TOSAST_STATE({text: res.msg})
-          if(!res.errcode) {
+          if (!res.errcode) {
             this.tableData.splice(index, 1);
           }
         })

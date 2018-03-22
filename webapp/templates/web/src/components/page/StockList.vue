@@ -1,11 +1,11 @@
 <template>
   <div>
     <Crumbs crumbs1="库存" crumbs2="库存列表"></Crumbs>
-     <!--操作 -->
+    <!--操作 -->
     <!--<div class="handle-box">-->
-      <!--<el-button type="primary" icon="delete" class="handle-del mr10">批量删除</el-button>-->
-      <!--<el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>-->
-      <!--<el-button type="primary" icon="search">搜索</el-button>-->
+    <!--<el-button type="primary" icon="delete" class="handle-del mr10">批量删除</el-button>-->
+    <!--<el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>-->
+    <!--<el-button type="primary" icon="search">搜索</el-button>-->
     <!--</div>-->
     <!-- 列表 -->
     <el-table :data="tableData"
@@ -35,7 +35,7 @@
         layout="prev, pager, next"
         :total="dataSum"
         :page-size="perPage"
-        @current-change ="handleCurrentChange">
+        @current-change="handleCurrentChange">
       </el-pagination>
     </div>
   </div>
@@ -61,8 +61,7 @@
     created() {
       this.getData();
     },
-    computed: {
-    },
+    computed: {},
     methods: {
       ...mapMutations(['TOSAST_STATE']),
       // 分页
@@ -72,16 +71,36 @@
       },
       // 获取分页数据
       getData() {
-        getStockList({params:{result: true, page: this.cur_page}}).then(res => {
-          this.tableData = res.data.list;
-          this.dataSum = res.data.count;
-          this.perPage = res.data.perPage
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        getStockList({
+          params: {
+            username: userInfo.user,
+            token: userInfo.token,
+            result: true,
+            page: this.cur_page
+          }
+        }).then(res => {
+          if (!res.errcode) {
+            this.tableData = res.data.list;
+            this.dataSum = res.data.count;
+            this.perPage = res.data.perPage
+          } else {
+            this.TOSAST_STATE({text: res.msg})
+            if (res.errcode == 2) {
+              setTimeout(() => {
+                localStorage.removeItem('userInfo')
+                this.$router.push('/login');
+              }, 1000)
+            }
+          }
+
         })
       },
       // 删除一条数据
       deleteRow(index, row) {
-        deleteStock({id: row.id}).then(res => {
-          if(!res.errcode) {
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        deleteStock({username: userInfo.user, token: userInfo.token, id: row.id}).then(res => {
+          if (!res.errcode) {
             this.tableData.splice(index, 1);
           }
           this.TOSAST_STATE({text: res.msg})
@@ -92,12 +111,12 @@
 </script>
 
 <style scoped>
-  .handle-box{
+  .handle-box {
     margin-bottom: 20px;
     min-width: 600px;
   }
 
-  .handle-input{
+  .handle-input {
     width: 300px;
     display: inline-block;
   }

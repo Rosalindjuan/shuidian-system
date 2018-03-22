@@ -6,13 +6,20 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
-// import 'element-ui/lib/theme-default/index.css';    // 默认主题
 import "babel-polyfill";
+
 
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+  if (!to.path.includes('login') && !localStorage.getItem('userInfo')) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
 Vue.use(ElementUI);
-// Vue.prototype.$axios = axios;
 
 /* eslint-disable no-new */
 new Vue({

@@ -2,16 +2,17 @@ import datetime
 from bson.objectid import ObjectId
 from umongo import Instance, Document, fields, validate, ValidationError
 from . import instance
-
+import time
+from webapp.utils import generateUserToken, SUPER_USER_TYPE, random_str, COMMON_USER_TYPE
 
 @instance.register
 class Users(Document):
+    uid = fields.StringField(unique=True, required=True)  # 管理员uid
+    token = fields.StrField(unique=True, required=True)  # 管理员登录token
     user = fields.StringField(unique=True, required=True)  # 管理员登录用户名
     password = fields.StringField()  # 管理员登录密码
     type = fields.StringField()  # 管理员类型 -- 超级管理员/普通管理员
     real_name = fields.StringField()  # 管理员真实姓名
-    # identity_code = fields.StringField()  # 用户识别码
-    # code = fields.StringField()  # 修改验证码
     department = fields.StringField()  # 管理员部门
     position = fields.StringField()  # 管理员职位
     tel = fields.StringField()  # 移动电话
@@ -19,19 +20,22 @@ class Users(Document):
     qq = fields.StringField()  # qq号
     wechat = fields.StringField()  # 微信
     is_active = fields.BooleanField(missing=True)  # 记录有效性
-    # delete_active = fields.BooleanField(missing=True)  # 删除有效性 True未删除,False删除
+    expires_time = fields.IntegerField()  # token过期时间
     created_time = fields.DateTimeField(missing=datetime.datetime.now)  # 记录时间
 
     class Meta:
         collection_name = 'users'
 
+    # 新建管理员
     @classmethod
-    async def new_user(cls, user='', password='', real_name='', department='', position='', tel='', email='',
-                       qq='', wechat='', type='普通管理员'):
+    async def new_user(cls, uid='', token='', user='', password='', real_name='', department='', position='', tel='', email='',
+                       qq='', wechat='', type='普通管理员',expires_time=''):
         ifuser = await cls.find_one({"user": user})
         if ifuser:
             return {'errcode': 1, 'msg': '已经有了该用户，换个名字吧'}
-        await cls(user=user,
+        await cls(uid=uid,
+                  token=token,
+                  user=user,
                   password=password,
                   type=type,
                   real_name=real_name,
@@ -40,9 +44,32 @@ class Users(Document):
                   tel=tel,
                   email=email,
                   qq=qq,
-                  wechat=wechat).commit()
+                  wechat=wechat,
+                  expires_time=expires_time).commit()
         return {'errcode': 0, 'msg': '添加成功'}
 
+    # 查找管理员 用户登录
+    @classmethod
+    async def user_login(cls, user='', password=''):
+        try:
+            user = await cls.find_one({'user': user})
+            if user.password == password:
+                # print(user.expires_time , time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(user.expires_time)))
+                if user.expires_time <= int(time.time()):
+                    print('过期了')
+                    type = COMMON_USER_TYPE if user.type == '普通管理员' else SUPER_USER_TYPE
+                    user_login = str(type) + str(int(time.time())) + random_str()
+                    userToken = generateUserToken(user.uid, user_login)
+                    user.token = userToken['token']
+                    user.expires_time = userToken['expiretime']
+                    await user.commit()
+                return {'errcode': 0, 'msg': '用户登录成功', 'data': {'user': user.user,'token':user.token}}
+            else:
+                return {'errcode': 1, 'msg': '密码错误，请重新输入密码'}
+        except:
+            return {'errcode': 1, 'msg': '没有该用户'}
+
+    # 更新管理员
     @classmethod
     async def update_user(cls, id='', department='', position='', tel='', email='', qq='', wechat=''):
         ifuser = await cls.find_one({"id": ObjectId('id')})
@@ -62,6 +89,15 @@ class Users(Document):
     async def get_users(cls):
         return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
 
+    # 用户token
+    @classmethod
+    async def get_user_token(cls, user='',token=''):
+        try:
+            return await cls.find_one({"user": user, 'token': token})
+        except:
+            return None
+
+
     # 获取管理员列表
     @classmethod
     async def get_user(cls, id=''):
@@ -70,6 +106,7 @@ class Users(Document):
         except:
             return None
 
+    # 删除管理员
     @classmethod
     async def delete_user(cls, id=''):
         try:

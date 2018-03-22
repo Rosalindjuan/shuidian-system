@@ -8,7 +8,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/stock_list'
     },
     {
       path: '/stock_list',

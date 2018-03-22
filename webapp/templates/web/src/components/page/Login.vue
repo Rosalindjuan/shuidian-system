@@ -7,7 +7,8 @@
           <el-input v-model="ruleForm.username" placeholder="username"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" placeholder="password" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')"></el-input>
+          <el-input type="password" placeholder="password" v-model="ruleForm.password"
+                    @keyup.enter.native="submitForm('ruleForm')"></el-input>
         </el-form-item>
         <div class="login-btn">
           <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
@@ -20,8 +21,12 @@
 
 
 <script>
+  import {toLogin} from '@/api'
+  import {mapMutations, mapState} from 'vuex'
+
+
   export default {
-    data(){
+    data() {
       return {
         ruleForm: {
           username: '',
@@ -29,21 +34,31 @@
         },
         rules: {
           username: [
-            { required: true, message: '请输入用户名', trigger: 'blur' }
+            {required: true, message: '请输入用户名', trigger: 'blur'}
           ],
           password: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur'}
           ]
         }
       }
     },
     methods: {
+      ...mapMutations(['TOSAST_STATE']),
       submitForm(formName) {
-        const self = this;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            localStorage.setItem('ms_username',this.ruleForm.username);
-            this.$router.push('/stock_list');
+            toLogin({username: this.ruleForm.username, password: this.ruleForm.password}).then(res => {
+              if (!res.errcode) {
+                localStorage.setItem('userInfo', JSON.stringify(res.data));
+                console.log(res)
+                this.$router.push('/stock_list');
+              } else {
+                this.TOSAST_STATE({text: res.msg})
+              }
+            })
+//            localStorage.setItem('ms_username',this.ruleForm.username);
+//            this.$router.push('/stock_list');
           } else {
             console.log('error submit!!');
             return false;
@@ -54,37 +69,41 @@
   }
 </script>
 <style scoped>
-  .login-wrap{
+  .login-wrap {
     position: relative;
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
   }
-  .ms-title{
+
+  .ms-title {
     position: absolute;
-    top:50%;
-    width:100%;
+    top: 50%;
+    width: 100%;
     margin-top: -230px;
     text-align: center;
-    font-size:30px;
+    font-size: 30px;
     color: #fff;
 
   }
-  .ms-login{
+
+  .ms-login {
     position: absolute;
-    left:50%;
-    top:50%;
-    width:300px;
-    height:160px;
-    margin:-150px 0 0 -190px;
-    padding:40px;
+    left: 50%;
+    top: 50%;
+    width: 300px;
+    height: 160px;
+    margin: -150px 0 0 -190px;
+    padding: 40px;
     border-radius: 5px;
     background: #fff;
   }
-  .login-btn{
+
+  .login-btn {
     text-align: center;
   }
-  .login-btn button{
-    width:100%;
-    height:36px;
+
+  .login-btn button {
+    width: 100%;
+    height: 36px;
   }
 </style>

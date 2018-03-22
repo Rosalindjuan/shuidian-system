@@ -1,6 +1,6 @@
 import pathlib
-from .views import Home, initData, StockList, newStock, StockDetail, getStocks, newTemplate, temList, temGoodsList, \
-    updateTemplate, Customers, addRepay, updateCusGoods, updateCustomer, deleteTemplate, Adminitors, Adminitor
+from .views import Home, initData, StockList, newStock, StockDetail, getStockNames, newTemplate, temList, temGoodsList, \
+    updateTemplate, Customers, addRepay, updateCusGoods, updateCustomer, deleteTemplate, Adminitors, Adminitor, login
 
 import re
 
@@ -12,7 +12,7 @@ routes = [
     ('*', '/stock', StockList, 'stock', True),
     ('PUT', '/new_stock', newStock, 'new_stock', True),
     ('*', '/stock_detail', StockDetail, 'stock_detail', True),
-    ('*', '/get_stocks', getStocks, 'get_stocks', True),
+    ('POST', '/get_stocks', getStockNames, 'get_stocks', True),
     ('POST', '/new_template', newTemplate, 'new_template', True),
     ('*', '/template_list', temList, 'template_list', True),
     ('POST', '/tem_goods_list', temGoodsList, 'tem_goods_list', True),
@@ -24,6 +24,7 @@ routes = [
     ('POST', '/update_customer', updateCustomer, 'update_customer', True),
     ('*', '/set_admin', Adminitors, 'set_admin', True),
     ('*', '/admin', Adminitor, 'admin', True),
+    ('POST', '/to_login',login,'to_login',True)
 
 ]
 

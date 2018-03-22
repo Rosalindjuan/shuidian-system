@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Created by jason at 2017/3/4
+
 import functools
 import json
 import asyncio
 import trafaret as T
 
-
-from time import time
-from aiohttp import web, abc
-
+import time
+import hashlib
+from random import Random
 
 primitive_ip_regexp = r'^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
 
@@ -64,3 +63,34 @@ TRAFARET = T.Dict({
             'replace_adir': T.String(),
         }),
 })
+
+SUPER_USER_TYPE = 1  # 超级管理员
+COMMON_USER_TYPE = 2  # 普通管理员
+
+
+# token的命名规则
+# uid user_login 当前时间
+# token过期时间为5小时
+
+# 用户token
+def generateUserToken(uid, user_login):
+    data = uid + user_login + str(int(time.time()))
+    token = hashlib.md5(data.encode("utf8"))
+    # expiretime = int(time.time()) + 3600 * 5
+    expiretime = int(time.time()) + 60 * 5
+    userToken = {
+        'token': token.hexdigest(),
+        'expiretime': expiretime
+    }
+    return userToken
+
+
+# 固定长度的随机字符串
+def random_str(randomlength=8):
+    str = ''
+    chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789'
+    length = len(chars) - 1
+    ran = Random()
+    for i in range(randomlength):
+        str += chars[ran.randint(0, length)]
+    return str

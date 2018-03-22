@@ -3,6 +3,8 @@ from aiohttp import web
 
 from store.models import Users, Stock, GoodsTemplate, Customer, CustomerGoodsDetail, CustomerRepayDetail, Users
 import json
+import time
+from .utils import random_str, generateUserToken, SUPER_USER_TYPE, COMMON_USER_TYPE
 
 
 class Home(web.View):
@@ -13,73 +15,134 @@ class Home(web.View):
 
 # 初始化数据
 async def initData(request):
-    await Users.new_user('admin', '888888', type='超级管理员')
+    uid = random_str()
+    user_login = str(SUPER_USER_TYPE) + str(int(time.time())) + random_str()
+    userToken = generateUserToken(uid, user_login)
+    print(userToken)
+    await Users.new_user(uid, userToken['token'], 'admin', '888888', type='超级管理员', expires_time=userToken['expiretime'])
     text = "系统初始化成功!<a href='" + str(request.url.parent) + "'>登录后台</a>"
     response = aiohttp_jinja2.render_template('base.html', request, {'code': text})
     return response
 
 
-# 新建库存
+# 用户登录
+async def login(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await Users.user_login(requestData['username'], requestData['password'], )
+    return web.json_response(result)
+
+
+# 判断用户是否过期
+async def judgeUser(requestData, funcName):
+    user = await Users.get_user_token(requestData['username'], requestData['token'])
+    if user:
+        if user.expires_time <= int(time.time()):
+            return {'errcode': 2, 'msg': 'token已过期，请重新登录'}
+        else:
+            # 没有过期的代码逻辑
+            return await funcName(requestData)
+    return {'errcode': 2, 'msg': '无该用户，请重新登录'}
+
+
+# 用户里面操作的逻辑
+class UserLogic:
+    # 创建库存
+    async def createStock(self, requestData):
+        return await Stock.create_stock(requestData['name'], requestData['num'], requestData['unit'],
+                                        float(requestData['opening_price']), float(requestData['price']),
+                                        requestData['remarks'])
+
+    # 修改库存
+    async def updateStock(self, requestData):
+        return await Stock.update_stock(requestData['name'], int(requestData['num']), requestData['unit'],
+                                        int(requestData['opening_price']), int(requestData['price']),
+                                        requestData['remarks'])
+
+    # 库存详情
+    async def getStockDetail(self, requestData):
+        stock = await Stock.get_stock(requestData['id'])
+        if stock:
+            data = {'name': stock.name, 'unit': stock.unit, 'num': stock.num, 'price': stock.price,
+                    'amount': stock.amount, 'opening_price': stock.opening_price,
+                    'opening_amount': stock.opening_amount,
+                    'remarks': stock.remarks}
+            return {'errcode': 0, 'msg': '', 'data': data}
+        return {'errcode': 1, 'msg': '无此货物'}
+
+    # 分页库存列表
+    async def stockPagination(self, requestData):
+        stocks = await Stock.get_stocks(requestData['result'])
+        stockList = []
+        perPage = 10
+        for item in stocks[(int(requestData['page']) - 1) * perPage: perPage * int(requestData['page'])]:
+            stockList.append(
+                {'id': str(item.id), 'name': item.name, 'unit': item.unit, 'num': item.num, 'price': item.price,
+                 'amount': item.amount,
+                 'opening_price': item.opening_price, 'opening_amount': item.opening_amount,
+                 'remarks': item.remarks})
+        return {'errcode': 0, 'msg': '', 'data': {'list': stockList, 'count': len(stocks), 'perPage': perPage}}
+
+    # 删除物料
+    async def deleteStock(self, requestData):
+        return await Stock.delete_stock(requestData['id'])
+
+    # 物料名称列表
+    async def getStockNames(self, requestData):
+        stocks = await Stock.get_stocks(True)
+        namelist = []
+        for item in stocks:
+            namelist.append(item.name)
+        return {'errcode': 0, 'msg': '', 'data': {'list': namelist}}
+
+
+# 物料
+
+# 新建物料
 async def newStock(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    result = await Stock.create_stock(requestData['name'], requestData['num'], requestData['unit'],
-                                      float(requestData['opening_price']), float(requestData['price']),
-                                      requestData['remarks'])
+    result = await judgeUser(requestData, UserLogic().createStock)
     return web.json_response(result)
 
 
 class StockDetail(web.View):
-    # 某库存详情
+    # 某物料详情
     async def get(self):
         query = dict(self.request.query)
-        stock = await Stock.get_stock(query['id'])
-        if stock:
-            data = {'name': stock.name, 'unit': stock.unit, 'num': stock.num, 'price': stock.price,
-                    'amount': stock.amount,
-                    'opening_price': stock.opening_price, 'opening_amount': stock.opening_amount,
-                    'remarks': stock.remarks}
-            return web.json_response({'errcode': 0, 'msg': '', 'data': data})
-        return web.json_response({'errcode': 1, 'msg': '无此货物'})
+        requestData = {'id': query['id'], 'token': query['token'], 'username': query['username']}
+        result = await judgeUser(requestData, UserLogic().getStockDetail)
+        return web.json_response(result)
 
-    # 修改某库存
+    # 修改某物料
     async def post(self):
         requestData = json.loads((await self.request.content.read()).decode('utf-8'))
-        result = await Stock.update_stock(requestData['name'], int(requestData['num']), requestData['unit'],
-                                          int(requestData['opening_price']), int(requestData['price']),
-                                          requestData['remarks'])
+        result = await judgeUser(requestData, UserLogic().updateStock)
         return web.json_response(result)
 
 
 class StockList(web.View):
-    # 库存列表
+    # 物料列表 有分页
     async def get(self):
         query = dict(self.request.query)
-        stocks = await Stock.get_stocks(query['result'])
-        list = []
-        perPage = 10
-        for item in stocks[(int(query['page']) - 1) * perPage: perPage * int(query['page'])]:
-            list.append({'id': str(item.id), 'name': item.name, 'unit': item.unit, 'num': item.num, 'price': item.price,
-                         'amount': item.amount,
-                         'opening_price': item.opening_price, 'opening_amount': item.opening_amount,
-                         'remarks': item.remarks})
-        return web.json_response(
-            {'errcode': 0, 'msg': '', 'data': {'list': list, 'count': len(stocks), 'perPage': perPage}})
+        requestData = {'token': query['token'], 'username': query['username'], 'result': query['result'],
+                       'page': query['page']}
+        result = await judgeUser(requestData, UserLogic().stockPagination)
+        return web.json_response(result)
 
-    # 删除某库存
+    # 删除某物料
     async def post(self):
         requestData = json.loads((await self.request.content.read()).decode('utf-8'))
-        result = await Stock.delete_stock(requestData['id'])
+        result = await judgeUser(requestData, UserLogic().deleteStock)
         return web.json_response(result)
 
 
-# 库存列表 名称
-async def getStocks(request):
-    stocks = await Stock.get_stocks(True)
-    list = []
-    for item in stocks:
-        list.append(item.name)
-    return web.json_response({'errcode': 0, 'msg': '', 'data': {'list': list}})
+# 物料名称列表
+async def getStockNames(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await judgeUser(requestData, UserLogic().getStockNames)
+    return web.json_response(result)
 
+
+# 模板接口
 
 # 创建模板
 async def newTemplate(request):
@@ -90,6 +153,7 @@ async def newTemplate(request):
 
 # 模板列表
 async def temList(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
     list = await GoodsTemplate.goods_template_list()
     data = []
     for l in list:
@@ -211,7 +275,8 @@ class Adminitors(web.View):
         list = []
         for i in users:
             list.append(
-                {'id': str(i.id), 'username': i.user, 'type': i.type ,'name': i.real_name, 'tel': i.tel, 'is_active': i.is_active})
+                {'id': str(i.id), 'username': i.user, 'type': i.type, 'name': i.real_name, 'tel': i.tel,
+                 'is_active': i.is_active})
         return web.json_response({'errcode': 0, 'msg': '', 'data': {'list': list}})
 
     # 新建管理员

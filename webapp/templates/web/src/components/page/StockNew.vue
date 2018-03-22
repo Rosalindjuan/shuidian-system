@@ -58,7 +58,10 @@
       // 提交
       onSubmit() {
         let newNum = parseInt(this.form.num) + parseInt(this.form.addNum)
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
         let params = {
+          username: userInfo.user,
+          token: userInfo.token,
           name: this.form.name,
           num: newNum,
           unit: this.form.unit,
@@ -74,6 +77,8 @@
                 if (!res.errcode) {
                   this.form.addNum = '0'
                   this.form.num = newNum
+                } else if (res.errcode == 2){
+                  this.$router.push('/login');
                 }
               })
             } else { // 创建物料
@@ -81,6 +86,8 @@
                 this.TOSAST_STATE({text: res.msg})
                 if (!res.errcode) {
                   this.form = {name: '', num: 0, addNum: 0, unit: '个', opening_price: 0, price: 0, remarks: ''}
+                } else if (res.errcode == 2){
+                  this.$router.push('/login');
                 }
               })
             }
@@ -96,11 +103,21 @@
         if (this.$route.params.id) {
           this.crumbs2 = '物品详情'
           this.readonly = true
-          let param = {params: {id: this.$route.params.id}}
+          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+          let param = {params: {id: this.$route.params.id,token: userInfo.token,username:userInfo.user}}
           getStock(param).then(res => {
+            console.log(res)
             if (!res.errcode) {
               this.form = res.data
               this.form.addNum = 0
+            }else{
+              this.TOSAST_STATE({text: res.msg})
+              if(res.errcode == 2) {
+                setTimeout(() => {
+                  localStorage.removeItem('userInfo')
+                  this.$router.push('/login');
+                }, 1000)
+              }
             }
           })
         } else {

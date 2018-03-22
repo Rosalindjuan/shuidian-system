@@ -21,7 +21,7 @@ export const updateStock = (params) => {
   return http.fetchPost('/stock_detail', params)
 }
 
-//
+
 //获取库存
 export const getStocks = (params) => {
   return http.fetchPost('/get_stocks', params)
@@ -102,4 +102,9 @@ export const deleteAdmin = (params) => {
 // 获取管理员
 export const getAdmin = (params) => {
   return http.fetchGet('/admin', params)
+}
+
+// 获取管理员
+export const toLogin = (params) => {
+  return http.fetchPost('/to_login', params)
 }

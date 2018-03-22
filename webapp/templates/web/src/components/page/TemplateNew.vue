@@ -146,7 +146,8 @@
       }
     },
     created() {
-      getStocks().then(res => {
+      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      getStocks({username: userInfo.user,token: userInfo.token}).then(res => {
         if (!res.errcode) {
           this.stocks = res.data.list
           this.setDetail()
