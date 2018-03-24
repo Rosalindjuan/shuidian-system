@@ -29,6 +29,15 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="pagination">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="dataSum"
+        :page-size="perPage"
+        @current-change="handleCurrentChange">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -44,7 +53,10 @@
     },
     data() {
       return {
-        tableData: []
+        tableData: [],
+        cur_page: 1,
+        perPage: 10,
+        dataSum: 10
       }
     },
     methods: {
@@ -65,25 +77,41 @@
             }
           }
         })
-      }
+      },
+      // 分页
+      handleCurrentChange(val) {
+        this.cur_page = val;
+        this.getData();
+      },
+      // 获取数据
+      getData() {
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        getAdminList({
+          params: {
+            token: userInfo.token,
+            username: userInfo.user,
+            result: true,
+            page: this.cur_page
+          }
+        }).then(res => {
+          if (!res.errcode) {
+            this.tableData = res.data.list;
+            this.dataSum = res.data.count;
+            this.perPage = res.data.perPage
+          } else {
+            this.TOSAST_STATE({text: res.msg})
+            if (res.errcode == 2) {
+              setTimeout(() => {
+                localStorage.removeItem('userInfo')
+                this.$router.push('/login');
+              }, 1000)
+            }
+          }
+        })
+      },
     },
     created() {
-      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      getAdminList({token: userInfo.token, username: userInfo.user}).then(res => {
-        console.log(res)
-        if (!res.errcode) {
-          this.tableData = res.data.list
-          console.log(this.tableData)
-        } else {
-          this.TOSAST_STATE({text: res.msg})
-          if (res.errcode == 2) {
-            setTimeout(() => {
-              localStorage.removeItem('userInfo')
-              this.$router.push('/login');
-            }, 1000)
-          }
-        }
-      })
+      this.getData()
     }
   }
 </script>

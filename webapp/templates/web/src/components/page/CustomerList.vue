@@ -12,38 +12,64 @@
       <el-table-column prop="address" label="住址" width="250"></el-table-column>
       <el-table-column prop="remarks" label="备注" width="200"></el-table-column>
     </el-table>
-    <!--<div class="pagination">-->
-      <!--<el-pagination-->
-        <!--background-->
-        <!--layout="prev, pager, next"-->
-        <!--:total="dataSum"-->
-        <!--:page-size="perPage"-->
-        <!--@current-change="handleCurrentChange">-->
-      <!--</el-pagination>-->
-    <!--</div>-->
+    <div class="pagination">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="dataSum"
+        :page-size="perPage"
+        @current-change="handleCurrentChange">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
   import Crumbs from "../common/Crumbs.vue"
   import {getCustomers} from "../../api"
+  import {mapMutations, mapState} from 'vuex'
 
   export default {
     components: {
       Crumbs
     },
-    data(){
+    data() {
       return {
-        tableData:[]
+        tableData: [],
+        cur_page: 1,
+        perPage: 10,
+        dataSum: 10
       }
     },
+    methods: {
+      ...mapMutations(['TOSAST_STATE']),
+      // 分页
+      handleCurrentChange(val) {
+        this.cur_page = val;
+        this.getData();
+      },
+      // 获取数据
+      getData() {
+        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        getCustomers({token: userInfo.token, username: userInfo.user, result: true, page: this.cur_page}).then(res => {
+          if (!res.errcode) {
+            this.tableData = res.data.list;
+            this.dataSum = res.data.count;
+            this.perPage = res.data.perPage
+          } else {
+            this.TOSAST_STATE({text: res.msg})
+            if (res.errcode == 2) {
+              setTimeout(() => {
+                localStorage.removeItem('userInfo')
+                this.$router.push('/login');
+              }, 1000)
+            }
+          }
+        })
+      },
+    },
     created() {
-      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      getCustomers({token: userInfo.token, username: userInfo.user}).then(res => {
-        if(!res.errcode) {
-          this.tableData = res.data
-        }
-      })
+      this.getData()
     }
   }
 </script>

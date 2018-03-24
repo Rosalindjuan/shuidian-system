@@ -15,12 +15,21 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="pagination">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="dataSum"
+        :page-size="perPage"
+        @current-change="handleCurrentChange">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
   import Crumbs from "../common/Crumbs.vue"
-  import {templateList, deleteTemplate} from "../../api"
+  import {templateListPage, deleteTemplate} from "../../api"
   import {mapMutations, mapState} from 'vuex'
 
 
@@ -30,17 +39,27 @@
     },
     data() {
       return {
-        tableData: []
+        tableData: [],
+        cur_page: 1,
+        perPage: 10,
+        dataSum: 10
       }
     },
     methods: {
       ...mapMutations(['TOSAST_STATE']),
+      // 分页
+      handleCurrentChange(val) {
+        this.cur_page = val;
+        this.getData();
+      },
       // 获取数据
       getData() {
         let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        templateList({token: userInfo.token, username: userInfo.user}).then(res => {
+        templateListPage({token: userInfo.token, username: userInfo.user, result: true, page: this.cur_page}).then(res => {
           if (!res.errcode) {
             this.tableData = res.data.list;
+            this.dataSum = res.data.count;
+            this.perPage = res.data.perPage
           } else {
             this.TOSAST_STATE({text: res.msg})
             if (res.errcode == 2) {

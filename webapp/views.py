@@ -110,7 +110,6 @@ class UserLogic:
         return await GoodsTemplate.update_goods_template(requestData['name'], requestData['remarks'],
                                                          requestData['goods'])
 
-    # 模板列表
     async def getTemList(self, requestData):
         temList = await GoodsTemplate.goods_template_list()
         data = []
@@ -118,6 +117,15 @@ class UserLogic:
             goods = await GoodsTemplate.get_tem_goods_list(str(item.id))
             data.append({'name': item.name, 'remarks': item.remarks, 'id': str(item.id), 'goods': goods['list']})
         return {'errcode': 0, 'msg': '', 'data': {'list': data}}
+
+    # 模板列表 分页
+    async def getTemListPage(self, requestData):
+        temList = await GoodsTemplate.goods_template_list(requestData['result'])
+        data = []
+        perPage = 10
+        for item in temList[(int(requestData['page']) - 1) * perPage: perPage * int(requestData['page'])]:
+            data.append({'name': item.name, 'remarks': item.remarks, 'id': str(item.id)})
+        return {'errcode': 0, 'msg': '', 'data': {'list': data, 'count': len(temList), 'perPage': perPage}}
 
     # 删除模板
     async def deleteTem(self, requestData):
@@ -174,6 +182,16 @@ class UserLogic:
                                                             i['stock_price'])
         return {'errcode': 0, 'msg': '修改成功'}
 
+    # 获取客户列表 分页
+    async def getCusList(self, requestData):
+        customers = await Customer.get_customers(requestData['result'])
+        data = []
+        perPage = 10
+        for item in customers[(int(requestData['page']) - 1) * perPage: perPage * int(requestData['page'])]:
+            data.append({'id': str(item.id), 'name': item.name, 'tel': item.tel, 'address': item.address,
+                         'remarks': item.remarks})
+        return {'errcode': 0, 'msg': '', 'data': {'list': data, 'count': len(customers), 'perPage': perPage}}
+
     # 新建管理员
     async def createAdmin(self, requestData):
         if requestData['password'] == requestData['surePsd']:
@@ -207,6 +225,16 @@ class UserLogic:
     # 删除管理员
     async def deleteAdmin(self, requestData):
         return await Users.delete_user(requestData['id'])
+
+    #管理员列表 分页
+    async def getAdmins(self,requestData):
+        users = await Users.get_users()
+        data = []
+        perPage = 10
+        for i in users[(int(requestData['page']) - 1) * perPage: perPage * int(requestData['page'])]:
+            data.append({'id': str(i.id), 'username': i.user, 'type': i.type, 'name': i.real_name, 'tel': i.tel,
+                         'is_active': i.is_active})
+        return {'errcode': 0, 'msg': '', 'data': {'list': data, 'count': len(users), 'perPage': perPage}}
 
 
 # 物料
@@ -279,7 +307,14 @@ async def updateTemplate(request):
     return web.json_response(result)
 
 
-# 模板列表
+# 模板列表 分页
+async def temListPage(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await judgeUser(requestData, UserLogic().getTemListPage)
+    return web.json_response(result)
+
+
+# 模板列表 所有列表
 async def temList(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
     result = await judgeUser(requestData, UserLogic().getTemList)
@@ -303,11 +338,9 @@ class Customers(web.View):
 
     # 获取客户列表
     async def post(self):
-        customers = await Customer.get_customers()
-        data = []
-        for i in customers:
-            data.append({'id': str(i.id), 'name': i.name, 'tel': i.tel, 'address': i.address, 'remarks': i.remarks})
-        return web.json_response({'errcode': 0, 'msg': '', 'data': data})
+        requestData = json.loads((await self.request.content.read()).decode('utf-8'))
+        result = await judgeUser(requestData, UserLogic().getCusList)
+        return web.json_response(result)
 
     # 客户信息
     async def get(self):
@@ -347,13 +380,11 @@ class Adminitors(web.View):
 
     # 管理员列表
     async def get(self):
-        users = await Users.get_users()
-        list = []
-        for i in users:
-            list.append(
-                {'id': str(i.id), 'username': i.user, 'type': i.type, 'name': i.real_name, 'tel': i.tel,
-                 'is_active': i.is_active})
-        return web.json_response({'errcode': 0, 'msg': '', 'data': {'list': list}})
+        query = dict(self.request.query)
+        requestData = {'token': query['token'], 'username': query['username'], 'page': query['page'], 'result': query['result']}
+        result = await judgeUser(requestData, UserLogic().getAdmins)
+        return web.json_response(result)
+
 
     # 删除管理员
     async def post(self):

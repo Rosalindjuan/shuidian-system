@@ -37,6 +37,11 @@ export const templateList = (params) => {
   return http.fetchPost('/template_list', params)
 }
 
+// 模板列表 分页
+export const templateListPage = (params) => {
+  return http.fetchPost('/template_list_page', params)
+}
+
 
 // 模板详情
 export const temGoodsList = (params) => {

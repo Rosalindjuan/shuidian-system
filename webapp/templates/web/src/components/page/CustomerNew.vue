@@ -132,7 +132,11 @@
     margin-left: 0;
     margin-right: 30px;
   }
-
+  .el-radio {
+    margin-left: 0;
+    margin-right: 30px;
+    margin-bottom: 15px;
+  }
   .min-height {
     height: 200px;
     border: 1px solid #eee;

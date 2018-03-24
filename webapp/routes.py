@@ -1,6 +1,7 @@
 import pathlib
-from .views import Home, initData, StockList, newStock, StockDetail, getStockNames, newTemplate, temList, temDetail, \
-    updateTemplate, Customers, addRepay, updateCusGoods, updateCustomer, deleteTemplate, Adminitors, Adminitor, login
+from .views import Home, initData, StockList, newStock, StockDetail, getStockNames, newTemplate, temList, temListPage, \
+    temDetail, updateTemplate, Customers, addRepay, updateCusGoods, updateCustomer, deleteTemplate, Adminitors, \
+    Adminitor, login
 
 import re
 
@@ -14,17 +15,18 @@ routes = [
     ('*', '/stock_detail', StockDetail, 'stock_detail', True),
     ('POST', '/get_stocks', getStockNames, 'get_stocks', True),
     ('POST', '/new_template', newTemplate, 'new_template', True),
-    ('*', '/template_list', temList, 'template_list', True),
+    ('POST', '/template_list', temList, 'template_list', True),
+    ('POST', '/template_list_page', temListPage, 'template_list_page', True),
     ('POST', '/tem_detail', temDetail, 'tem_detail', True),
     ('POST', '/update_template', updateTemplate, 'update_template', True),
     ('POST', '/delete_template', deleteTemplate, 'delete_template', True),
-    ('*','/customer', Customers, 'customer',True),
+    ('*', '/customer', Customers, 'customer', True),
     ('POST', '/add_repay', addRepay, 'add_repay', True),
     ('POST', '/update_cus_goods', updateCusGoods, 'update_cus_goods', True),
     ('POST', '/update_customer', updateCustomer, 'update_customer', True),
     ('*', '/set_admin', Adminitors, 'set_admin', True),
     ('*', '/admin', Adminitor, 'admin', True),
-    ('POST', '/to_login',login,'to_login',True)
+    ('POST', '/to_login', login, 'to_login', True)
 
 ]
 

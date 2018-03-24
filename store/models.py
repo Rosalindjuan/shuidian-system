@@ -239,7 +239,7 @@ class GoodsTemplate(Document):
     # 模板列表
     @classmethod
     async def goods_template_list(cls, is_active=None):
-        if is_active == None:
+        if is_active == None or is_active == 'true':
             return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
         return await cls.find({"is_active": is_active}).sort([('created_time', -1)]).to_list(length=None)
 
@@ -288,8 +288,11 @@ class Customer(Document):
                          remarks=remarks).commit()
 
     @classmethod
-    async def get_customers(cls, is_active=True):
+    async def get_customers(cls, is_active=None):
+        if is_active == None or is_active == 'true':
+            return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
         return await cls.find({"is_active": is_active}).sort([('created_time', -1)]).to_list(length=None)
+
 
     @classmethod
     async def get_customer(cls, id=''):
