@@ -133,9 +133,7 @@
     margin-right: 30px;
   }
   .el-radio {
-    margin-left: 0;
-    margin-right: 30px;
-    margin-bottom: 15px;
+    margin: 10px 30px 10px 0;
   }
   .min-height {
     height: 200px;
