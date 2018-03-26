@@ -41,8 +41,11 @@
         dataSum: 10
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       // 分页
       handleCurrentChange(val) {
         this.cur_page = val;
@@ -50,8 +53,12 @@
       },
       // 获取数据
       getData() {
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        getCustomers({token: userInfo.token, username: userInfo.user, result: true, page: this.cur_page}).then(res => {
+        getCustomers({
+          token: this.userInfo.token,
+          username: this.userInfo.user,
+          result: true,
+          page: this.cur_page
+        }).then(res => {
           if (!res.errcode) {
             this.tableData = res.data.list;
             this.dataSum = res.data.count;
@@ -59,10 +66,8 @@
           } else {
             this.TOSAST_STATE({text: res.msg})
             if (res.errcode == 2) {
-              setTimeout(() => {
-                localStorage.removeItem('userInfo')
-                this.$router.push('/login');
-              }, 1000)
+              this.REMOVE_USERINFO()
+              this.$router.push('/login');
             }
           }
         })

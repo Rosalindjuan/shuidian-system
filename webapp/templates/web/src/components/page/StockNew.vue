@@ -7,16 +7,16 @@
           <el-input v-model="form.name" :disabled="readonly"></el-input>
         </el-form-item>
         <!--<el-form-item label="数量" prop="num">-->
-          <!--<el-input v-model="form.num" :disabled="readonly"></el-input>-->
+        <!--<el-input v-model="form.num" :disabled="readonly"></el-input>-->
         <!--</el-form-item>-->
         <!--<el-form-item label="添加数量" prop="addNum">-->
-          <!--<el-input v-model="form.addNum"></el-input>-->
+        <!--<el-input v-model="form.addNum"></el-input>-->
         <!--</el-form-item>-->
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit"></el-input>
         </el-form-item>
         <!--<el-form-item label="进价" prop="opening_price">-->
-          <!--<el-input v-model="form.opening_price"></el-input>-->
+        <!--<el-input v-model="form.opening_price"></el-input>-->
         <!--</el-form-item>-->
         <el-form-item label="单价" prop="price">
           <el-input v-model="form.price"></el-input>
@@ -53,15 +53,17 @@
         }
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       // 提交
       onSubmit() {
         let newNum = parseInt(this.form.num) + parseInt(this.form.addNum)
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
         let params = {
-          username: userInfo.user,
-          token: userInfo.token,
+          username: this.userInfo.user,
+          token: this.userInfo.token,
           name: this.form.name,
           num: newNum,
           unit: this.form.unit,
@@ -77,7 +79,8 @@
                 if (!res.errcode) {
                   this.form.addNum = '0'
                   this.form.num = newNum
-                } else if (res.errcode == 2){
+                } else if (res.errcode == 2) {
+                  this.REMOVE_USERINFO()
                   this.$router.push('/login');
                 }
               })
@@ -86,35 +89,32 @@
                 this.TOSAST_STATE({text: res.msg})
                 if (!res.errcode) {
                   this.form = {name: '', num: 0, addNum: 0, unit: '个', opening_price: 0, price: 0, remarks: ''}
-                } else if (res.errcode == 2){
+                } else if (res.errcode == 2) {
+                  this.REMOVE_USERINFO()
                   this.$router.push('/login');
                 }
               })
             }
           } else {
-//            console.log('error submit!!');
             return false;
           }
         });
-
-
       },
       setDetail() {
         if (this.$route.params.id) {
           this.crumbs2 = '物品详情'
           this.readonly = true
-          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-          let param = {params: {id: this.$route.params.id,token: userInfo.token,username:userInfo.user}}
+          let param = {params: {id: this.$route.params.id, token: this.userInfo.token, username: this.userInfo.user}}
           getStock(param).then(res => {
             console.log(res)
             if (!res.errcode) {
               this.form = res.data
               this.form.addNum = 0
-            }else{
+            } else {
               this.TOSAST_STATE({text: res.msg})
-              if(res.errcode == 2) {
+              if (res.errcode == 2) {
                 setTimeout(() => {
-                  localStorage.removeItem('userInfo')
+                  this.REMOVE_USERINFO()
                   this.$router.push('/login');
                 }, 1000)
               }
@@ -129,6 +129,7 @@
     },
     created() {
       this.setDetail()
+      console.log(this.userInfo)
     },
     watch: {
       '$route'() {

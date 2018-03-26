@@ -7,14 +7,19 @@ import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 import "babel-polyfill";
-
+import {getStore} from "./utils/storage";
+import {setWechatTitle} from "./utils/setWechatTitle";
 
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  if (!to.path.includes('login') && !localStorage.getItem('userInfo')) {
+  // 设置页面标题
+  typeof to.meta.pageTitle !== undefined && setWechatTitle(to.meta.pageTitle)
+
+  if (!to.path.includes('login') && !getStore('userInfo')) {
     next('/login')
   } else {
+    store.commit('GET_USERINFO')
     next()
   }
 })

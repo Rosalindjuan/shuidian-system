@@ -46,8 +46,11 @@
         isIndeterminate: true
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       // 是否全选
       handleCheckAllChange(val) {
         this.checkedStocks = val ? this.stocks : [];
@@ -80,10 +83,9 @@
       // 提交
       onSubmit() {
         if (this.checkStock() && this.checkname()) {
-          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
           let param = {
-            username: userInfo.user,
-            token: userInfo.token,
+            username: this.userInfo.user,
+            token: this.userInfo.token,
             name: this.name,
             remarks: this.remarks,
             goods: this.checkedStocks
@@ -92,10 +94,8 @@
             updateTemplate(param).then(res => {
               this.TOSAST_STATE({text: res.msg})
               if (res.errcode == 2) {
-                setTimeout(() => {
-                  localStorage.removeItem('userInfo')
-                  this.$router.push('/login');
-                }, 1000)
+                this.REMOVE_USERINFO()
+                this.$router.push('/login');
               }
             })
           } else { // 新建模板
@@ -107,13 +107,9 @@
                 this.checkedStocks = this.stocks
                 this.isIndeterminate = false;
                 this.checkAll = true
-              } else {
-                if (res.errcode == 2) {
-                  setTimeout(() => {
-                    localStorage.removeItem('userInfo')
-                    this.$router.push('/login');
-                  }, 1000)
-                }
+              } else if (res.errcode == 2) {
+                this.REMOVE_USERINFO()
+                this.$router.push('/login');
               }
             })
           }
@@ -139,8 +135,7 @@
         if (this.$route.params.id) {
           this.crumbs2 = '模板详情'
           this.readonly = true
-          let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-          let param = {username: userInfo.user, token: userInfo.token, id: this.$route.params.id}
+          let param = {username: this.userInfo.user, token: this.userInfo.token, id: this.$route.params.id}
           temGoodsList(param).then(res => {
             console.log(res)
             if (!res.errcode) {
@@ -150,6 +145,12 @@
               let ifAll = this.judgeEequal(this.stocks, this.checkedStocks)
               this.isIndeterminate = this.checkedStocks.length > 0 && !ifAll
               this.checkAll = ifAll
+            } else {
+              this.TOSAST_STATE({text: res.msg})
+              if (res.errcode == 2) {
+                this.REMOVE_USERINFO()
+                this.$router.push('/login');
+              }
             }
           })
         } else {
@@ -165,18 +166,15 @@
       }
     },
     created() {
-      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      getStocks({username: userInfo.user, token: userInfo.token}).then(res => {
+      getStocks({username: this.userInfo.user, token: this.userInfo.token}).then(res => {
         if (!res.errcode) {
           this.stocks = res.data.list
           this.setDetail()
         } else {
           this.TOSAST_STATE({text: res.msg})
           if (res.errcode == 2) {
-            setTimeout(() => {
-              localStorage.removeItem('userInfo')
-              this.$router.push('/login');
-            }, 1000)
+            this.REMOVE_USERINFO()
+            this.$router.push('/login');
           }
         }
       })
@@ -192,6 +190,9 @@
 </script>
 
 <style scoped>
+  .el-checkbox+.el-checkbox {
+    margin-left: 0;
+  }
   .el-checkbox {
     margin-right: 30px;
     margin-left: 0;

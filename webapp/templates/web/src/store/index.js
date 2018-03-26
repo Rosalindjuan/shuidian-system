@@ -10,6 +10,7 @@ Vue.use(Vuex)
 const state = {
   toastText: '',
   toastTime: 1000,
+  userInfo: null,
 }
 
 export default new Vuex.Store({

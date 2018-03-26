@@ -63,6 +63,7 @@
       }
     },
     computed: {
+      ...mapState(['userInfo']),
       currentTemGoods() {
         let currentTem = this.templateList.find(item => item.name == this.form.checkedTem)
         if (currentTem) {
@@ -73,15 +74,14 @@
       }
     },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       onSubmit() {
         this.$refs['rulesform'].validate((valid) => {
           if (valid) {
             if (this.checkedStocks.length > 0) {
-              let userInfo = JSON.parse(localStorage.getItem('userInfo'));
               let params = {
-                token: userInfo.token,
-                username: userInfo.user,
+                token: this.userInfo.token,
+                username: this.userInfo.user,
                 form: this.form,
                 checkedStocks: this.checkedStocks
               }
@@ -96,6 +96,9 @@
                     checkedTem: '',
                   }
                   this.checkedStocks = []
+                } else if (res.errcode == 2) {
+                  this.REMOVE_USERINFO()
+                  this.$router.push('/login');
                 }
               })
             } else {
@@ -109,17 +112,14 @@
       }
     },
     created() {
-      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      templateList({token: userInfo.token, username: userInfo.user}).then(res => {
+      templateList({token: this.userInfo.token, username: this.userInfo.user}).then(res => {
         if (!res.errcode) {
           this.templateList = res.data.list
         } else {
           this.TOSAST_STATE({text: res.msg})
           if (res.errcode == 2) {
-            setTimeout(() => {
-              localStorage.removeItem('userInfo')
-              this.$router.push('/login');
-            }, 1000)
+            this.REMOVE_USERINFO()
+            this.$router.push('/login');
           }
         }
       })

@@ -44,21 +44,19 @@
       }
     },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO','REWRITE_USERINFO']),
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             toLogin({username: this.ruleForm.username, password: this.ruleForm.password}).then(res => {
               if (!res.errcode) {
-                localStorage.setItem('userInfo', JSON.stringify(res.data));
+                this.REWRITE_USERINFO(res.data)
                 console.log(res)
                 this.$router.push('/stock_list');
               } else {
                 this.TOSAST_STATE({text: res.msg})
               }
             })
-//            localStorage.setItem('ms_username',this.ruleForm.username);
-//            this.$router.push('/stock_list');
           } else {
             console.log('error submit!!');
             return false;

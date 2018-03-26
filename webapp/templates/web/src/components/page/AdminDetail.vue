@@ -30,6 +30,7 @@
 <script>
   import Crumbs from "../common/Crumbs.vue"
   import {getAdmin} from "../../api"
+  import {mapMutations, mapState} from 'vuex'
 
 
   export default {
@@ -41,18 +42,21 @@
         admin: {}
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
+    methods: {
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
+    },
     created() {
-      let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-      getAdmin({params: {id: this.$route.params.id, token: userInfo.token, username: userInfo.user}}).then(res => {
+      getAdmin({params: {id: this.$route.params.id, token: this.userInfo.token, username: this.userInfo.user}}).then(res => {
         if (!res.errcode) {
           this.admin = res.data
         } else {
           this.TOSAST_STATE({text: res.msg})
           if (res.errcode == 2) {
-            setTimeout(() => {
-              localStorage.removeItem('userInfo')
-              this.$router.push('/login');
-            }, 1000)
+            this.REMOVE_USERINFO()
+            this.$router.push('/login');
           }
         }
       })

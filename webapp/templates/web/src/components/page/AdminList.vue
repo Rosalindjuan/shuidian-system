@@ -59,21 +59,21 @@
         dataSum: 10
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       // 删除一条数据
       deleteRow(index, row) {
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        deleteAdmin({token: userInfo.token, username: userInfo.user, id: row.id}).then(res => {
+        deleteAdmin({token: this.userInfo.token, username: this.userInfo.user, id: row.id}).then(res => {
           this.TOSAST_STATE({text: res.msg})
           if (!res.errcode) {
             this.tableData.splice(index, 1);
           } else {
             if (res.errcode == 2) {
-              setTimeout(() => {
-                localStorage.removeItem('userInfo')
-                this.$router.push('/login');
-              }, 1000)
+              this.REMOVE_USERINFO()
+              this.$router.push('/login');
             }
           }
         })
@@ -85,11 +85,10 @@
       },
       // 获取数据
       getData() {
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
         getAdminList({
           params: {
-            token: userInfo.token,
-            username: userInfo.user,
+            token: this.userInfo.token,
+            username: this.userInfo.user,
             result: true,
             page: this.cur_page
           }
@@ -101,10 +100,8 @@
           } else {
             this.TOSAST_STATE({text: res.msg})
             if (res.errcode == 2) {
-              setTimeout(() => {
-                localStorage.removeItem('userInfo')
-                this.$router.push('/login');
-              }, 1000)
+              this.REMOVE_USERINFO()
+              this.$router.push('/login');
             }
           }
         })

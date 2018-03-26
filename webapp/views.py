@@ -28,7 +28,7 @@ async def initData(request):
 # 用户登录
 async def login(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
-    result = await Users.user_login(requestData['username'], requestData['password'], )
+    result = await Users.user_login(requestData['username'], requestData['password'])
     return web.json_response(result)
 
 

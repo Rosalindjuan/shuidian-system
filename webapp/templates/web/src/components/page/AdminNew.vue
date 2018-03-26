@@ -122,19 +122,17 @@
         }
       }
     },
+    computed: {
+      ...mapState(['userInfo'])
+    },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log('submit', this.form)
-            let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-
-            newAdmin({token: userInfo.token, username: userInfo.user, ...this.form}).then(res => {
+            newAdmin({token: this.userInfo.token, username: this.userInfo.user, ...this.form}).then(res => {
               console.log(res)
               this.TOSAST_STATE({text: res.msg})
-
-
               if (!res.errcode) {
                 this.form = {
                   user: '',
@@ -150,10 +148,8 @@
                 }
               }else{
                 if(res.errcode == 2) {
-                  setTimeout(() => {
-                    localStorage.removeItem('userInfo')
-                    this.$router.push('/login');
-                  }, 1000)
+                  this.REMOVE_USERINFO()
+                  this.$router.push('/login');
                 }
               }
             })

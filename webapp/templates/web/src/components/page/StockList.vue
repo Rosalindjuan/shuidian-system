@@ -61,9 +61,11 @@
     created() {
       this.getData();
     },
-    computed: {},
+    computed: {
+      ...mapState(['userInfo'])
+    },
     methods: {
-      ...mapMutations(['TOSAST_STATE']),
+      ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
       // 分页
       handleCurrentChange(val) {
         this.cur_page = val;
@@ -71,11 +73,10 @@
       },
       // 获取分页数据
       getData() {
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
         getStockList({
           params: {
-            username: userInfo.user,
-            token: userInfo.token,
+            username: this.userInfo.user,
+            token: this.userInfo.token,
             result: true,
             page: this.cur_page
           }
@@ -87,10 +88,8 @@
           } else {
             this.TOSAST_STATE({text: res.msg})
             if (res.errcode == 2) {
-              setTimeout(() => {
-                localStorage.removeItem('userInfo')
-                this.$router.push('/login');
-              }, 1000)
+              this.REMOVE_USERINFO()
+              this.$router.push('/login');
             }
           }
 
@@ -98,8 +97,7 @@
       },
       // 删除一条数据
       deleteRow(index, row) {
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        deleteStock({username: userInfo.user, token: userInfo.token, id: row.id}).then(res => {
+        deleteStock({username: this.userInfo.user, token: this.userInfo.token, id: row.id}).then(res => {
           if (!res.errcode) {
             this.tableData.splice(index, 1);
           }
