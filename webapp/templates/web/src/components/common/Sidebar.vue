@@ -36,16 +36,16 @@
           {
             icon: 'el-icon-menu',
             index: '1',
-            title: '库存',
+            title: '物料',
             subs: [
               {
                 index: '/stock_new',
-                title: '新建库存',
+                title: '新建物料',
                 icon: 'el-icon-edit-outline',
               },
               {
                 index: '/stock_list',
-                title: '库存列表',
+                title: '物料列表',
                 icon: 'el-icon-tickets',
               },
             ]

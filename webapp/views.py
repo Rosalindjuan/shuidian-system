@@ -46,19 +46,19 @@ async def judgeUser(requestData, funcName):
 
 # 用户里面操作的逻辑
 class UserLogic:
-    # 创建库存
+    # 创建物料
     async def createStock(self, requestData):
         return await Stock.create_stock(requestData['name'], requestData['num'], requestData['unit'],
                                         float(requestData['opening_price']), float(requestData['price']),
                                         requestData['remarks'])
 
-    # 修改库存
+    # 修改物料
     async def updateStock(self, requestData):
         return await Stock.update_stock(requestData['name'], int(requestData['num']), requestData['unit'],
                                         int(requestData['opening_price']), int(requestData['price']),
                                         requestData['remarks'])
 
-    # 库存详情
+    # 物料详情
     async def getStockDetail(self, requestData):
         stock = await Stock.get_stock(requestData['id'])
         if stock:
@@ -69,7 +69,7 @@ class UserLogic:
             return {'errcode': 0, 'msg': '', 'data': data}
         return {'errcode': 1, 'msg': '无此货物'}
 
-    # 分页库存列表
+    # 分页物料列表
     async def stockPagination(self, requestData):
         stocks = await Stock.get_stocks(requestData['result'])
         stockList = []

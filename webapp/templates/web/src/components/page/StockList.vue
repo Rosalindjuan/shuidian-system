@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Crumbs crumbs1="库存" crumbs2="库存列表"></Crumbs>
+    <Crumbs crumbs1="物料" crumbs2="物料列表"></Crumbs>
     <!--操作 -->
     <!--<div class="handle-box">-->
     <!--<el-button type="primary" icon="delete" class="handle-del mr10">批量删除</el-button>-->

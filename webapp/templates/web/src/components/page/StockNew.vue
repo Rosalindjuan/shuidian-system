@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Crumbs crumbs1="库存" :crumbs2="crumbs2"></Crumbs>
+    <Crumbs crumbs1="物料" :crumbs2="crumbs2"></Crumbs>
     <div class="form-box">
       <el-form :model="form" :rules="rules" ref="rulesform" label-width="80px">
         <el-form-item label="名称" prop="name">
@@ -44,7 +44,7 @@
     },
     data() {
       return {
-        crumbs2: '新建库存',
+        crumbs2: '新建物料',
         readonly: false,
         form: {name: '', num: 0, addNum: 0, unit: '个', opening_price: 0, price: 0, remarks: ''},
         rules: {
@@ -121,7 +121,7 @@
             }
           })
         } else {
-          this.crumbs2 = '新建库存'
+          this.crumbs2 = '新建物料'
           this.readonly = false
           this.form = {name: '', num: 0, addNum: 0, unit: '个', opening_price: 0, price: 0, remarks: ''}
         }

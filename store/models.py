@@ -118,7 +118,7 @@ class Users(Document):
             return {'errcode': 1, 'msg': '没有此管理员,请检查管理员列表'}
 
 
-# 库存
+# 物料
 @instance.register
 class Stock(Document):
     name = fields.StringField(unique=True, required=True)  # 名称
@@ -139,7 +139,7 @@ class Stock(Document):
     async def create_stock(cls, name='', num=0, unit='', opening_price=0, price=0, remarks=''):
         stock = await cls.find_one({"name": name})
         if stock:
-            return {'errcode': 1, 'msg': '已经有了库存，换个名字吧'}
+            return {'errcode': 1, 'msg': '已经有了物料，换个名字吧'}
         await cls(name=name,
                   num=num,
                   unit=unit,
@@ -150,7 +150,7 @@ class Stock(Document):
                   remarks=remarks).commit()
         return {'errcode': 0, 'msg': '添加成功'}
 
-    # 获取库存列表
+    # 获取物料列表
     @classmethod
     async def get_stocks(cls, is_active=None):
         if is_active == 'true' or is_active == True:
@@ -161,7 +161,7 @@ class Stock(Document):
     async def get_stocks_count(cls):
         return await cls.find({"is_active": True}).count()
 
-    # 获取库存
+    # 获取物料
     @classmethod
     async def get_stock(cls, id=''):
         try:
@@ -169,7 +169,7 @@ class Stock(Document):
         except:
             return None
 
-    # 删除库存
+    # 删除物料
     @classmethod
     async def delete_stock(cls, id=''):
         try:
@@ -180,7 +180,7 @@ class Stock(Document):
         except:
             return {'errcode': 1, 'msg': '没有此物料,请检查物料列表'}
 
-    # 修改库存
+    # 修改物料
     @classmethod
     async def update_stock(cls, name='', num=0, unit='', opening_price=0, price=0, remarks=''):
         stock = await cls.find_one({"name": name})
