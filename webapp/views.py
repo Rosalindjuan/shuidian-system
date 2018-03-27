@@ -5,6 +5,7 @@ from store.models import Users, Stock, GoodsTemplate, Customer, CustomerGoodsDet
 import json
 import time
 from .utils import random_str, generateUserToken, SUPER_USER_TYPE, COMMON_USER_TYPE
+from hashlib import md5
 
 
 class Home(web.View):
@@ -13,13 +14,18 @@ class Home(web.View):
         return {}
 
 
+def genearteMD5(str):
+    data = md5(str.encode(encoding='utf-8'))
+    return data.hexdigest()
+
+
 # 初始化数据
 async def initData(request):
     uid = random_str()
     user_login = str(SUPER_USER_TYPE) + str(int(time.time())) + random_str()
     userToken = generateUserToken(uid, user_login)
-    print(userToken)
-    await Users.new_user(uid, userToken['token'], 'admin', '888888', type='超级管理员', expires_time=userToken['expiretime'])
+    await Users.new_user(uid, userToken['token'], 'admin', genearteMD5('888888'), type='超级管理员',
+                         expires_time=userToken['expiretime'])
     with open("webapp/stocks.json", encoding="utf-8") as load_f:
         json_stocks = json.loads(load_f.read())
         for item in json_stocks:
@@ -219,7 +225,8 @@ class UserLogic:
                     ifuser = False
             user_login = str(COMMON_USER_TYPE) + str(int(time.time())) + random_str()
             userToken = generateUserToken(uid, user_login)
-            result = await Users.new_user(uid, userToken['token'], requestData['user'], requestData['password'],
+            result = await Users.new_user(uid, userToken['token'], requestData['user'],
+                                          genearteMD5(requestData['password']),
                                           requestData['name'], requestData['department'], requestData['position'],
                                           requestData['tel'], requestData['email'], requestData['qq'],
                                           requestData['wechat'], expires_time=userToken['expiretime'])

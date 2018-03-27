@@ -23,8 +23,7 @@
 <script>
   import {toLogin} from '@/api'
   import {mapMutations, mapState} from 'vuex'
-
-
+  import md5 from 'md5'
   export default {
     data() {
       return {
@@ -48,7 +47,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            toLogin({username: this.ruleForm.username, password: this.ruleForm.password}).then(res => {
+            toLogin({username: this.ruleForm.username, password: md5(this.ruleForm.password)}).then(res => {
               if (!res.errcode) {
                 this.REWRITE_USERINFO(res.data)
                 console.log(res)
