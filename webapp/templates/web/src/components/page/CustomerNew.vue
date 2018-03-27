@@ -128,12 +128,11 @@
 </script>
 
 <style scoped>
-  .el-checkbox {
+  .el-checkbox+.el-checkbox {
     margin-left: 0;
-    margin-right: 30px;
   }
-  .el-radio {
-    margin: 10px 30px 10px 0;
+  .el-checkbox {
+    margin: 0 30px 10px 0;
   }
   .min-height {
     height: 200px;
