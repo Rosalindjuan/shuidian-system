@@ -1,0 +1,602 @@
+[
+  {
+    "name": "110管子",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 48,
+    "remarks": ""
+  },
+  {
+    "name": "110弯头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "110三通",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "110直接",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 2,
+    "remarks": ""
+  },
+  {
+    "name": "110伸缩节",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 8,
+    "remarks": ""
+  },
+  {
+    "name": "110立减",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 8,
+    "remarks": ""
+  },
+  {
+    "name": "110立四通",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 10,
+    "remarks": ""
+  },
+  {
+    "name": "110卡子",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 3,
+    "remarks": ""
+  },
+  {
+    "name": "110*75扑心",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 2,
+    "remarks": ""
+  },
+  {
+    "name": "110预埋件",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "75管子",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 26,
+    "remarks": ""
+  },
+  {
+    "name": "75弯头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 3,
+    "remarks": ""
+  },
+  {
+    "name": "75三通",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "75直接",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 1,
+    "remarks": ""
+  },
+  {
+    "name": "75预埋件",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "75皮弯",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 7,
+    "remarks": ""
+  },
+  {
+    "name": "75卡子",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 2.5,
+    "remarks": ""
+  },
+  {
+    "name": "胶水",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "25ppr管",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 33,
+    "remarks": ""
+  },
+  {
+    "name": "25弯头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 1.5,
+    "remarks": ""
+  },
+  {
+    "name": "25三通",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 1.5,
+    "remarks": ""
+  },
+  {
+    "name": "25弯头内丝",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "25桥湾",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 3,
+    "remarks": ""
+  },
+  {
+    "name": "25升降阀",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 20,
+    "remarks": ""
+  },
+  {
+    "name": "25球阀",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 15,
+    "remarks": ""
+  },
+  {
+    "name": "25回水阀",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 10,
+    "remarks": ""
+  },
+  {
+    "name": "25直接",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 1,
+    "remarks": ""
+  },
+  {
+    "name": "蛇皮管",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 100,
+    "remarks": ""
+  },
+  {
+    "name": "电机",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 300,
+    "remarks": ""
+  },
+  {
+    "name": "压力桶（小）",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 280,
+    "remarks": ""
+  },
+  {
+    "name": "压力桶（大）",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 400,
+    "remarks": ""
+  },
+  {
+    "name": "盘管",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 7,
+    "remarks": ""
+  },
+  {
+    "name": "20PVC线管",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "线盒",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 1,
+    "remarks": ""
+  },
+  {
+    "name": "电箱",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 20,
+    "remarks": ""
+  },
+  {
+    "name": "多媒体箱",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 30,
+    "remarks": ""
+  },
+  {
+    "name": "脱线盘",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 15,
+    "remarks": ""
+  },
+  {
+    "name": "漏电（明装）",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 50,
+    "remarks": ""
+  },
+  {
+    "name": "漏电（暗装）",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 50,
+    "remarks": ""
+  },
+  {
+    "name": "单皮两进两出",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 20,
+    "remarks": ""
+  },
+  {
+    "name": "单皮",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 10,
+    "remarks": ""
+  },
+  {
+    "name": "4平方线",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 240,
+    "remarks": ""
+  },
+  {
+    "name": "2.5平方线",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 140,
+    "remarks": ""
+  },
+  {
+    "name": "1.5平方线",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 85,
+    "remarks": ""
+  },
+  {
+    "name": "网线",
+    "num": 0,
+    "unit": "米",
+    "opening_price": 0,
+    "price": 3,
+    "remarks": ""
+  },
+  {
+    "name": "160管子",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 78,
+    "remarks": ""
+  },
+  {
+    "name": "160管头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 8,
+    "remarks": ""
+  },
+  {
+    "name": "160三通",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 10,
+    "remarks": ""
+  },
+  {
+    "name": "160*110扑心",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "160直接",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "塑料水龙头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "塑料角阀",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "铜水龙头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 15,
+    "remarks": ""
+  },
+  {
+    "name": "铜角阀",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 15,
+    "remarks": ""
+  },
+  {
+    "name": "铜洗衣机龙头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 20,
+    "remarks": ""
+  },
+  {
+    "name": "脸盆龙头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 110,
+    "remarks": ""
+  },
+  {
+    "name": "脸盆下水",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 15,
+    "remarks": ""
+  },
+  {
+    "name": "软管",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 10,
+    "remarks": ""
+  },
+  {
+    "name": "三联",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 120,
+    "remarks": ""
+  },
+  {
+    "name": "淋浴头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 30,
+    "remarks": ""
+  },
+  {
+    "name": "拖把池",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 100,
+    "remarks": ""
+  },
+  {
+    "name": "10平方铝线",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 100,
+    "remarks": ""
+  },
+  {
+    "name": "小节能灯",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 13,
+    "remarks": ""
+  },
+  {
+    "name": "大节能灯",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 20,
+    "remarks": ""
+  },
+  {
+    "name": "灯座",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 2,
+    "remarks": ""
+  },
+  {
+    "name": "保温棉",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 5,
+    "remarks": ""
+  },
+  {
+    "name": "上水器",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 120,
+    "remarks": ""
+  },
+  {
+    "name": "线条",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 4,
+    "remarks": ""
+  },
+  {
+    "name": "铜活接外丝",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 15,
+    "remarks": ""
+  },
+  {
+    "name": "铜头（太阳能）",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 10,
+    "remarks": ""
+  },
+  {
+    "name": "菜盆龙头",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 120,
+    "remarks": ""
+  },
+  {
+    "name": "菜盆",
+    "num": 0,
+    "unit": "个",
+    "opening_price": 0,
+    "price": 140,
+    "remarks": ""
+  },
+  {
+    "name": "平方工",
+    "num": 0,
+    "unit": "平方",
+    "opening_price": 0,
+    "price": 7,
+    "remarks": ""
+  },
+  {
+    "name": "卫生间工",
+    "num": 0,
+    "unit": "平方",
+    "opening_price": 0,
+    "price": 500,
+    "remarks": ""
+  },
+  {
+    "name": "厨房",
+    "num": 0,
+    "unit": "平方",
+    "opening_price": 0,
+    "price": 200,
+    "remarks": ""
+  }
+]

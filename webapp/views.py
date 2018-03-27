@@ -20,6 +20,11 @@ async def initData(request):
     userToken = generateUserToken(uid, user_login)
     print(userToken)
     await Users.new_user(uid, userToken['token'], 'admin', '888888', type='超级管理员', expires_time=userToken['expiretime'])
+    with open("webapp/stocks.json", encoding="utf-8") as load_f:
+        json_stocks = json.loads(load_f.read())
+        for item in json_stocks:
+            await Stock.create_stock(item['name'], item['num'], item['unit'], float(item['opening_price']),
+                                     float(item['price']), item['remarks'])
     text = "系统初始化成功!<a href='" + str(request.url.parent) + "'>登录后台</a>"
     response = aiohttp_jinja2.render_template('base.html', request, {'code': text})
     return response
@@ -193,13 +198,13 @@ class UserLogic:
         return {'errcode': 0, 'msg': '', 'data': {'list': data, 'count': len(customers), 'perPage': perPage}}
 
     # 客户详情，添加物料
-    async def addCusGoods(self,requestData):
+    async def addCusGoods(self, requestData):
         data = []
         for item in requestData['checkedStocks']:
             detail = await CustomerGoodsDetail.new_c_detail(requestData['customer_id'], item)
             if detail:
                 data.append(detail)
-        return {'errcode': 0, 'msg': '添加物料成功','data': {'list': data}}
+        return {'errcode': 0, 'msg': '添加物料成功', 'data': {'list': data}}
 
     # 新建管理员
     async def createAdmin(self, requestData):
@@ -235,8 +240,8 @@ class UserLogic:
     async def deleteAdmin(self, requestData):
         return await Users.delete_user(requestData['id'])
 
-    #管理员列表 分页
-    async def getAdmins(self,requestData):
+    # 管理员列表 分页
+    async def getAdmins(self, requestData):
         users = await Users.get_users()
         data = []
         perPage = 10
@@ -379,11 +384,13 @@ async def updateCusGoods(request):
     result = await judgeUser(requestData, UserLogic().updateCusGoods)
     return web.json_response(result)
 
+
 # 添加物料 客户详情
 async def addCusGoods(request):
     requestData = json.loads((await request.content.read()).decode('utf-8'))
     result = await judgeUser(requestData, UserLogic().addCusGoods)
     return web.json_response(result)
+
 
 class Adminitors(web.View):
     # 新建管理员
@@ -395,10 +402,10 @@ class Adminitors(web.View):
     # 管理员列表
     async def get(self):
         query = dict(self.request.query)
-        requestData = {'token': query['token'], 'username': query['username'], 'page': query['page'], 'result': query['result']}
+        requestData = {'token': query['token'], 'username': query['username'], 'page': query['page'],
+                       'result': query['result']}
         result = await judgeUser(requestData, UserLogic().getAdmins)
         return web.json_response(result)
-
 
     # 删除管理员
     async def post(self):
