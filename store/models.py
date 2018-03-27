@@ -328,12 +328,17 @@ class CustomerGoodsDetail(Document):
     async def new_c_detail(cls, customer_id='', stock_name=''):
         customer = await Customer.find_one({'id': ObjectId(customer_id)})
         stock = await Stock.find_one({'name': stock_name})
-        if stock:
-            return await cls(customer=customer,
-                             stock_name=stock_name,
-                             stock_price=stock.price).commit()
-        return await cls(customer=customer,
-                         stock_name=stock_name).commit()
+        detail = await cls.find_one({'stock_name': stock_name})
+
+        if customer and stock:
+            if detail:
+                pass
+            else:
+                c_detail = await cls(customer=customer,
+                          stock_name=stock_name,
+                          stock_price=stock.price).commit()
+                return {'id': str(c_detail.inserted_id),'stock_name': stock_name, 'stock_num': 0,'stock_price': stock.price, 'stock_amount': 0}
+        return None
 
     @classmethod
     async def get_customer_goods(cls, customer_id=''):

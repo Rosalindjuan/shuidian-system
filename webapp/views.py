@@ -192,6 +192,15 @@ class UserLogic:
                          'remarks': item.remarks})
         return {'errcode': 0, 'msg': '', 'data': {'list': data, 'count': len(customers), 'perPage': perPage}}
 
+    # 客户详情，添加物料
+    async def addCusGoods(self,requestData):
+        data = []
+        for item in requestData['checkedStocks']:
+            detail = await CustomerGoodsDetail.new_c_detail(requestData['customer_id'], item)
+            if detail:
+                data.append(detail)
+        return {'errcode': 0, 'msg': '添加物料成功','data': {'list': data}}
+
     # 新建管理员
     async def createAdmin(self, requestData):
         if requestData['password'] == requestData['surePsd']:
@@ -370,6 +379,11 @@ async def updateCusGoods(request):
     result = await judgeUser(requestData, UserLogic().updateCusGoods)
     return web.json_response(result)
 
+# 添加物料 客户详情
+async def addCusGoods(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    result = await judgeUser(requestData, UserLogic().addCusGoods)
+    return web.json_response(result)
 
 class Adminitors(web.View):
     # 新建管理员

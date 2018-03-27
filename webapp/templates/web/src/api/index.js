@@ -86,6 +86,10 @@ export const updateCusGoods = (params) => {
 export const updateCustomer = (params) => {
   return http.fetchPost('/update_customer', params)
 }
+// 修改客户信息
+export const addCusGoods = (params) => {
+  return http.fetchPost('/add_cus_goods', params)
+}
 
 
 // 管理员列表信息

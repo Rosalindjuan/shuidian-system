@@ -76,8 +76,7 @@ COMMON_USER_TYPE = 2  # 普通管理员
 def generateUserToken(uid, user_login):
     data = uid + user_login + str(int(time.time()))
     token = hashlib.md5(data.encode("utf8"))
-    # expiretime = int(time.time()) + 3600 * 5
-    expiretime = int(time.time()) + 60 * 30
+    expiretime = int(time.time()) + 3600 * 5
     userToken = {
         'token': token.hexdigest(),
         'expiretime': expiretime

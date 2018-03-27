@@ -76,26 +76,28 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmitGoods">保存</el-button>
-          <el-button type="text" @click="dialogVisible = true">添加物料</el-button>
-          <!--<el-button type="primary" v-popover:popover>添加使用物料</el-button>-->
+          <el-button type="text" @click="addGoodsShow">添加物料</el-button>
         </el-form-item>
       </el-form>
 
     </div>
-
-    <!--<el-dialog title="提示" :visible.sync="dialogVisible" width="30%">-->
-    <!--<span>这里是添加物料的信息</span>-->
-    <!--<span slot="footer" class="dialog-footer">-->
-    <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
-    <!--<el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
-    <!--</span>-->
-    <!--</el-dialog>-->
+    <div class="addStock" v-if="dialogVisible">
+      <h2>添加物料</h2>
+      <el-form>
+        <el-checkbox-group v-model="checkedStocks" @change="handleCheckedChange">
+          <el-checkbox v-for="stock in stocks" :label="stock" :key="stock">{{stock}}</el-checkbox>
+        </el-checkbox-group>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmitAddStock">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
 <script>
   import Crumbs from "../common/Crumbs.vue"
-  import {getCustomer, addCusRepay, updateCustomer, updateCusGoods} from "../../api"
+  import {getStocks, getCustomer, addCusRepay, updateCustomer, updateCusGoods, addCusGoods} from "../../api"
   import {mapMutations, mapState} from 'vuex'
 
   export default {
@@ -117,6 +119,8 @@
           address: [{required: true, message: '请输入客户住址', trigger: 'blur'}],
         },
         goodsList: [],
+        stocks: [],
+        checkedStocks: [],
         repay: {
           repayMoney: '',
           repayTime: ''
@@ -145,9 +149,6 @@
     },
     methods: {
       ...mapMutations(['TOSAST_STATE', 'GET_USERINFO', 'REMOVE_USERINFO']),
-      addGoods() {
-
-      },
       // 修改客户信息
       onSubmitCus() {
         this.$refs['rulesform'].validate((valid) => {
@@ -229,6 +230,58 @@
             }
           })
         }
+      },
+
+      // 添加物料 内容显示
+      addGoodsShow() {
+        this.dialogVisible = true
+        this.goodsList.map(item => {
+          let index = this.stocks.indexOf(item.stock_name);
+          if (index > -1) {
+            this.stocks.splice(index, 1);
+          }
+        })
+      },
+      // 多选选择
+      handleCheckedChange() {
+        console.log(this.checkedStocks)
+      },
+      // 获取物料列表
+      getStockList() {
+        getStocks({username: this.userInfo.user, token: this.userInfo.token}).then(res => {
+          if (!res.errcode) {
+            this.stocks = res.data.list
+            console.log(this.stocks)
+          } else {
+            this.TOSAST_STATE({text: res.msg})
+            if (res.errcode == 2) {
+              this.REMOVE_USERINFO()
+              this.$router.push('/login');
+            }
+          }
+        })
+      },
+      // 提交添加物料
+      onSubmitAddStock(){
+        let param = {username: this.userInfo.user,
+          token: this.userInfo.token,
+          customer_id: this.$route.params.id,
+          checkedStocks: this.checkedStocks
+        }
+        addCusGoods(param).then(res => {
+          console.log('addCusGoods', res)
+          this.TOSAST_STATE({text: res.msg})
+          if(!res.errcode) {
+            res.data.list.map(item => {
+//              let goods = this.goodsList.find(list => list.stock_name == item)
+//              if(!goods){
+              this.goodsList.push({id: item.id,stock_amount: item.stock_amount,stock_num: item.stock_num,stock_price: item.stock_price,stock_name: item.stock_name})
+//              }
+            })
+            this.checkedStocks = []
+            this.dialogVisible = false
+          }
+        })
       }
     },
     created() {
@@ -246,6 +299,7 @@
           }
         }
       })
+      this.getStockList()
     }
   }
 </script>
@@ -299,5 +353,29 @@
   .add-btn button {
     display: block;
     margin: 0 auto;
+  }
+  .addStock {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 300px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-left: -250px;
+    margin-top: -150px;
+    padding: 10px;
+    overflow: auto;
+  }
+  .addStock h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .el-checkbox+.el-checkbox {
+    margin-left: 0;
+  }
+  .el-checkbox {
+    margin: 0 30px 10px 0;
   }
 </style>
