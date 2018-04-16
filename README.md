@@ -69,3 +69,7 @@ git clone ssh://git@ph.join-clima.com/diffusion/PARSER/join-parser.git parser
 db.users.update({'is_active':false},{$set:{'is_active':true}},{multi:true})
 ```
     
+    
+## 使用
+/init
+初始化项目
