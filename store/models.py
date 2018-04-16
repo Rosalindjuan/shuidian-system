@@ -154,8 +154,8 @@ class Stock(Document):
     @classmethod
     async def get_stocks(cls, is_active=None):
         if is_active == 'true' or is_active == True:
-            return await cls.find({"is_active": True}).sort([('created_time', -1)]).to_list(length=None)
-        return await cls.find({"is_active": False}).sort([('created_time', -1)]).to_list(length=None)
+            return await cls.find({"is_active": True}).sort([('created_time', 1)]).to_list(length=None)
+        return await cls.find({"is_active": False}).sort([('created_time', 1)]).to_list(length=None)
 
     @classmethod
     async def get_stocks_count(cls):

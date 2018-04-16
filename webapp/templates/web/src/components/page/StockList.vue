@@ -54,7 +54,7 @@
       return {
         tableData: [],
         cur_page: 1,
-        perPage: 10,
+        perPage: 20,
         dataSum: 10
       }
     },

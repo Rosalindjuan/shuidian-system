@@ -84,7 +84,7 @@ class UserLogic:
     async def stockPagination(self, requestData):
         stocks = await Stock.get_stocks(requestData['result'])
         stockList = []
-        perPage = 10
+        perPage = 20
         for item in stocks[(int(requestData['page']) - 1) * perPage: perPage * int(requestData['page'])]:
             stockList.append(
                 {'id': str(item.id), 'name': item.name, 'unit': item.unit, 'num': item.num, 'price': item.price,
