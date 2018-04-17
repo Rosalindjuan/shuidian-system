@@ -66,7 +66,7 @@ class UserLogic:
     # 修改物料
     async def updateStock(self, requestData):
         return await Stock.update_stock(requestData['name'], int(requestData['num']), requestData['unit'],
-                                        int(requestData['opening_price']), int(requestData['price']),
+                                        float(requestData['opening_price']), float(requestData['price']),
                                         requestData['remarks'])
 
     # 物料详情
