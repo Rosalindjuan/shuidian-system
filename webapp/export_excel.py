@@ -32,12 +32,13 @@ async def export_customer_detail(path, customer_id):
     col = t = 1
     sum = 0
     for item in customer_goods:
-        col += 1
-        ws.write(col, 0, item.stock_name)
-        ws.write(col, 1, item.stock_price)
-        ws.write(col, 2, item.stock_num)
-        ws.write(col, 3, item.stock_amount)
-        sum += item.stock_amount
+        if item.stock_num > 0:
+            col += 1
+            ws.write(col, 0, item.stock_name)
+            ws.write(col, 1, item.stock_price)
+            ws.write(col, 2, item.stock_num)
+            ws.write(col, 3, item.stock_amount)
+            sum += item.stock_amount
 
     for itemR in customer_repay:
         t += 1
