@@ -1,6 +1,8 @@
 <template>
   <div>
     <Crumbs crumbs1="客户" crumbs2="客户详情"></Crumbs>
+    <div @click="download" class="download">下载客户详情</div>
+    <!--<a href="files/list.xlsx" >下载客户详情</a>-->
     <div class="plugins-tips">客户基本信息</div>
     <div class="form-box">
       <el-form label-width="100px" :model="form" :rules="rules" ref="rulesform">
@@ -97,7 +99,15 @@
 
 <script>
   import Crumbs from "../common/Crumbs.vue"
-  import {getStocks, getCustomer, addCusRepay, updateCustomer, updateCusGoods, addCusGoods} from "../../api"
+  import {
+    getStocks,
+    getCustomer,
+    addCusRepay,
+    updateCustomer,
+    updateCusGoods,
+    addCusGoods,
+    exportCusDetail
+  } from "../../api"
   import {mapMutations, mapState} from 'vuex'
 
   export default {
@@ -251,7 +261,6 @@
         getStocks({username: this.userInfo.user, token: this.userInfo.token}).then(res => {
           if (!res.errcode) {
             this.stocks = res.data.list
-            console.log(this.stocks)
           } else {
             this.TOSAST_STATE({text: res.msg})
             if (res.errcode == 2) {
@@ -262,24 +271,45 @@
         })
       },
       // 提交添加物料
-      onSubmitAddStock(){
-        let param = {username: this.userInfo.user,
+      onSubmitAddStock() {
+        let param = {
+          username: this.userInfo.user,
           token: this.userInfo.token,
           customer_id: this.$route.params.id,
           checkedStocks: this.checkedStocks
         }
         addCusGoods(param).then(res => {
-          console.log('addCusGoods', res)
           this.TOSAST_STATE({text: res.msg})
-          if(!res.errcode) {
+          if (!res.errcode) {
             res.data.list.map(item => {
-//              let goods = this.goodsList.find(list => list.stock_name == item)
-//              if(!goods){
-              this.goodsList.push({id: item.id,stock_amount: item.stock_amount,stock_num: item.stock_num,stock_price: item.stock_price,stock_name: item.stock_name})
-//              }
+              this.goodsList.push({
+                id: item.id,
+                stock_amount: item.stock_amount,
+                stock_num: item.stock_num,
+                stock_price: item.stock_price,
+                stock_name: item.stock_name
+              })
             })
             this.checkedStocks = []
             this.dialogVisible = false
+          }
+        })
+      },
+      downloadFile(){
+        var elemIF = document.createElement("iframe");
+        elemIF.src = "files/list.xlsx";
+        elemIF.style.display = "none";
+        document.body.appendChild(elemIF);
+      },
+      download() {
+        let param = {
+          username: this.userInfo.user,
+          token: this.userInfo.token,
+          customer_id: this.$route.params.id
+        }
+        exportCusDetail(param).then(res => {
+          if (!res.errcode) {
+            this.downloadFile()
           }
         })
       }
@@ -307,6 +337,15 @@
 <style scoped>
   ul, li {
     list-style: none;
+  }
+  .download {
+    cursor: pointer;
+    margin-bottom: 20px;
+    color: #409eff;
+    border: 1px solid #409eff;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 5px;
   }
 
   .repay-info {
@@ -354,6 +393,7 @@
     display: block;
     margin: 0 auto;
   }
+
   .addStock {
     position: fixed;
     left: 50%;
@@ -368,13 +408,16 @@
     padding: 10px;
     overflow: auto;
   }
+
   .addStock h2 {
     text-align: center;
     margin-bottom: 20px;
   }
-  .el-checkbox+.el-checkbox {
+
+  .el-checkbox + .el-checkbox {
     margin-left: 0;
   }
+
   .el-checkbox {
     margin: 0 30px 10px 0;
   }

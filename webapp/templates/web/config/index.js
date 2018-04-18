@@ -16,7 +16,7 @@ module.exports = {
         // target: 'http://dev.qunhuan.com/renrenbao/',
         // 测试环境
         // target: 'http://e.92-8.net/',
-        target: 'http://192.168.2.40:8888/',
+        target: 'http://192.168.2.53:8888/',
         changeOrigin: true,
         pathRewrite: {
           '^/index.php': '/index.php'

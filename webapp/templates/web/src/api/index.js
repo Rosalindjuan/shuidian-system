@@ -117,3 +117,8 @@ export const getAdmin = (params) => {
 export const toLogin = (params) => {
   return http.fetchPost('/to_login', params)
 }
+
+// 导出客户列表详情
+export const exportCusDetail = (params) => {
+  return http.fetchPost('/export_cus_detail', params)
+}

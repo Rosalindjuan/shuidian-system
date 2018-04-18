@@ -6,6 +6,7 @@ import json
 import time
 from .utils import random_str, generateUserToken, SUPER_USER_TYPE, COMMON_USER_TYPE
 from hashlib import md5
+from .export_excel import export_customer_detail
 
 
 class Home(web.View):
@@ -257,6 +258,10 @@ class UserLogic:
                          'is_active': i.is_active})
         return {'errcode': 0, 'msg': '', 'data': {'list': data, 'count': len(users), 'perPage': perPage}}
 
+    async def exportExcelCusDetail(self, requestData):
+        await export_customer_detail(requestData['path'], requestData['customer_id'])
+        return {'errcode': 0, 'msg': ''}
+
 
 # 物料
 
@@ -428,3 +433,10 @@ class Adminitor(web.View):
         requestData = {'username': query['username'], 'token': query['token'], 'id': query['id']}
         result = await judgeUser(requestData, UserLogic().getAdminDetail)
         return web.json_response(result)
+
+
+async def exportCusDetail(request):
+    requestData = json.loads((await request.content.read()).decode('utf-8'))
+    requestData['path'] = request.app.config['excel']['path']
+    result = await judgeUser(requestData, UserLogic().exportExcelCusDetail)
+    return web.json_response(result)

@@ -1,7 +1,7 @@
 import pathlib
 from .views import Home, initData, StockList, newStock, StockDetail, getStockNames, newTemplate, temList, temListPage, \
     temDetail, updateTemplate, Customers, addRepay, updateCusGoods, updateCustomer, deleteTemplate, Adminitors, \
-    Adminitor, login, addCusGoods
+    Adminitor, login, addCusGoods,exportCusDetail
 
 import re
 
@@ -27,7 +27,8 @@ routes = [
     ('POST', '/add_cus_goods', addCusGoods, 'add_cus_goods', True),
     ('*', '/set_admin', Adminitors, 'set_admin', True),
     ('*', '/admin', Adminitor, 'admin', True),
-    ('POST', '/to_login', login, 'to_login', True)
+    ('POST', '/to_login', login, 'to_login', True),
+    ('POST', '/export_cus_detail', exportCusDetail, 'export_cus_detail', True)
 
 
 ]
@@ -49,3 +50,6 @@ def setup_static_routes(app):
     app.router.add_static('/static/',
                           path=PROJECT_ROOT / 'templates/web/dist/static',
                           name='static')
+    app.router.add_static('/files/',
+                          path=PROJECT_ROOT / 'files',
+                          name='files')

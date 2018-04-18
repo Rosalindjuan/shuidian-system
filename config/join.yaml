@@ -18,6 +18,8 @@ redis:
   minsize: 5
   maxsize: 10
 
+excel:
+  path: 'webapp/files/list.xlsx'
 
 pulsar:
   bind: '127.0.0.1:8888'

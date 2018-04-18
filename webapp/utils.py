@@ -23,6 +23,10 @@ TRAFARET = T.Dict({
             'minsize': T.Int(),
             'maxsize': T.Int(),
         }),
+    T.Key('excel'):
+        T.Dict({
+            'path': T.String(),
+        }),
     T.Key('wechat'):
         T.Dict({
             'appid': T.String(),
