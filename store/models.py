@@ -328,8 +328,7 @@ class CustomerGoodsDetail(Document):
     async def new_c_detail(cls, customer_id='', stock_name=''):
         customer = await Customer.find_one({'id': ObjectId(customer_id)})
         stock = await Stock.find_one({'name': stock_name})
-        detail = await cls.find_one({'stock_name': stock_name})
-
+        detail = await cls.find_one({'customer': ObjectId(customer_id), 'stock_name': stock_name})
         if customer and stock:
             if detail:
                 pass
