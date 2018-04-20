@@ -5,7 +5,7 @@
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
                     <img class="user-logo" src="../../../static/img/img.jpg">
-                    {{username}}
+                    {{userInfo.user}}
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="loginout">退出</el-dropdown-item>
@@ -15,22 +15,20 @@
     </div>
 </template>
 <script>
+    import {mapMutations, mapState} from 'vuex'
     export default {
         data() {
             return {
-                name: 'linxin'
             }
         },
-        computed:{
-            username(){
-                let userInfo = JSON.parse(localStorage.getItem('userInfo'));
-                return userInfo ? userInfo.user : this.name;
-            }
+        computed: {
+            ...mapState(['userInfo'])
         },
         methods:{
+            ...mapMutations(['REMOVE_USERINFO']),
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('ms_username')
+                    this.REMOVE_USERINFO()
                     this.$router.push('/login');
                 }
             }

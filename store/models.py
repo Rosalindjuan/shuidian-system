@@ -50,19 +50,16 @@ class Users(Document):
 
     # 查找管理员 用户登录
     @classmethod
-    async def user_login(cls, user='', password=''):
+    async def user_login(cls, user_name='', password=''):
         try:
-            user = await cls.find_one({'user': user})
+            user = await cls.find_one({'user': user_name})
             if user.password == password:
-                # print(user.expires_time , time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(user.expires_time)))
-                if user.expires_time <= int(time.time()):
-                    print('过期了')
-                    type = COMMON_USER_TYPE if user.type == '普通管理员' else SUPER_USER_TYPE
-                    user_login = str(type) + str(int(time.time())) + random_str()
-                    userToken = generateUserToken(user.uid, user_login)
-                    user.token = userToken['token']
-                    user.expires_time = userToken['expiretime']
-                    await user.commit()
+                type = COMMON_USER_TYPE if user.type == '普通管理员' else SUPER_USER_TYPE
+                user_login = str(type) + str(int(time.time())) + random_str()
+                userToken = generateUserToken(user.uid, user_login)
+                user.token = userToken['token']
+                user.expires_time = userToken['expiretime']
+                await user.commit()
                 return {'errcode': 0, 'msg': '用户登录成功', 'data': {'user': user.user,'token':user.token}}
             else:
                 return {'errcode': 1, 'msg': '密码错误，请重新输入密码'}
